@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API-eBuilder", "API-eBuilder\API-eBuilder.csproj", "{359E3F46-2A12-44E7-B6F1-2AF444A36EAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{7585B67B-5ED9-463C-AFA7-20421D4F4BC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{359E3F46-2A12-44E7-B6F1-2AF444A36EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{359E3F46-2A12-44E7-B6F1-2AF444A36EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{359E3F46-2A12-44E7-B6F1-2AF444A36EAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7585B67B-5ED9-463C-AFA7-20421D4F4BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7585B67B-5ED9-463C-AFA7-20421D4F4BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7585B67B-5ED9-463C-AFA7-20421D4F4BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7585B67B-5ED9-463C-AFA7-20421D4F4BC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

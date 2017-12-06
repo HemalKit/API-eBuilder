@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ebuilderModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="attendance">
+          <Key>
+            <PropertyRef Name="AID" />
+          </Key>
+          <Property Name="AID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="checkIn" Type="time" Precision="0" />
+          <Property Name="checkOut" Type="time" Precision="0" />
+          <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="employee">
+          <Key>
+            <PropertyRef Name="EID" />
+          </Key>
+          <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="password" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="email" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="emailVerified" Type="bit" />
+          <Property Name="activationCode" Type="varchar" MaxLength="250" />
+          <Property Name="dob" Type="date" Nullable="false" />
+          <Property Name="fName" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="lName" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="gender" Type="enum" Nullable="false" />
+          <Property Name="homeNo" Type="varchar" MaxLength="100" />
+          <Property Name="street" Type="varchar" MaxLength="250" />
+          <Property Name="city" Type="varchar" MaxLength="250" />
+          <Property Name="jobCategory" Type="enum" Nullable="false" />
+        </EntityType>
+        <EntityType Name="leav">
+          <Key>
+            <PropertyRef Name="LID" />
+          </Key>
+          <Property Name="LID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="reason" Type="varchar" MaxLength="1000" />
+          <Property Name="category" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="attendance_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="attendance" Type="Self.attendance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="attendance">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="leav_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="leav" Type="Self.leav" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="leav">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ebuilderModelStoreContainer">
+          <EntitySet Name="attendance" EntityType="Self.attendance" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="employee" EntityType="Self.employee" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="leav" EntityType="Self.leav" Schema="ebuilder" store:Type="Tables" />
+          <AssociationSet Name="attendance_ibfk_1" Association="Self.attendance_ibfk_1">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="attendance" EntitySet="attendance" />
+          </AssociationSet>
+          <AssociationSet Name="leav_ibfk_1" Association="Self.leav_ibfk_1">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="leav" EntitySet="leav" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ebuilderModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="attendance">
+          <Key>
+            <PropertyRef Name="AID" />
+          </Key>
+          <Property Name="AID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" />
+          <Property Name="checkIn" Type="Time" />
+          <Property Name="checkOut" Type="Time" />
+          <Property Name="EID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="employee" Relationship="Self.attendance_ibfk_1" FromRole="attendance" ToRole="employee" />
+        </EntityType>
+        <EntityType Name="employee">
+          <Key>
+            <PropertyRef Name="EID" />
+          </Key>
+          <Property Name="EID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="email" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="emailVerified" Type="Boolean" />
+          <Property Name="activationCode" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="dob" Type="DateTime" Nullable="false" />
+          <Property Name="fName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="lName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="gender" Type="String" MaxLength="65532" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="homeNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="street" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="city" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="jobCategory" Type="String" MaxLength="65532" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="attendances" Relationship="Self.attendance_ibfk_1" FromRole="employee" ToRole="attendance" />
+          <NavigationProperty Name="leavs" Relationship="Self.leav_ibfk_1" FromRole="employee" ToRole="leav" />
+        </EntityType>
+        <EntityType Name="leav">
+          <Key>
+            <PropertyRef Name="LID" />
+          </Key>
+          <Property Name="LID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" />
+          <Property Name="reason" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="category" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="EID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="employee" Relationship="Self.leav_ibfk_1" FromRole="leav" ToRole="employee" />
+        </EntityType>
+        <Association Name="attendance_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="attendance" Type="Self.attendance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="attendance">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="leav_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="leav" Type="Self.leav" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="leav">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ebuilderEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="attendances" EntityType="Self.attendance" />
+          <EntitySet Name="employees" EntityType="Self.employee" />
+          <EntitySet Name="leavs" EntityType="Self.leav" />
+          <AssociationSet Name="attendance_ibfk_1" Association="Self.attendance_ibfk_1">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="attendance" EntitySet="attendances" />
+          </AssociationSet>
+          <AssociationSet Name="leav_ibfk_1" Association="Self.leav_ibfk_1">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="leav" EntitySet="leavs" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ebuilderModelStoreContainer" CdmEntityContainer="ebuilderEntities">
+          <EntitySetMapping Name="attendances">
+            <EntityTypeMapping TypeName="ebuilderModel.attendance">
+              <MappingFragment StoreEntitySet="attendance">
+                <ScalarProperty Name="AID" ColumnName="AID" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="checkIn" ColumnName="checkIn" />
+                <ScalarProperty Name="checkOut" ColumnName="checkOut" />
+                <ScalarProperty Name="EID" ColumnName="EID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="employees">
+            <EntityTypeMapping TypeName="ebuilderModel.employee">
+              <MappingFragment StoreEntitySet="employee">
+                <ScalarProperty Name="EID" ColumnName="EID" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="emailVerified" ColumnName="emailVerified" />
+                <ScalarProperty Name="activationCode" ColumnName="activationCode" />
+                <ScalarProperty Name="dob" ColumnName="dob" />
+                <ScalarProperty Name="fName" ColumnName="fName" />
+                <ScalarProperty Name="lName" ColumnName="lName" />
+                <ScalarProperty Name="gender" ColumnName="gender" />
+                <ScalarProperty Name="homeNo" ColumnName="homeNo" />
+                <ScalarProperty Name="street" ColumnName="street" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="jobCategory" ColumnName="jobCategory" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="leavs">
+            <EntityTypeMapping TypeName="ebuilderModel.leav">
+              <MappingFragment StoreEntitySet="leav">
+                <ScalarProperty Name="LID" ColumnName="LID" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="reason" ColumnName="reason" />
+                <ScalarProperty Name="category" ColumnName="category" />
+                <ScalarProperty Name="EID" ColumnName="EID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
