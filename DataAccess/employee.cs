@@ -34,7 +34,7 @@ namespace DataAccess
         public string city { get; set; }
         public string jobCategory { get; set; }
     
-        public virtual ICollection<attendance> attendances { get; set; }
-        public virtual ICollection<leav> leavs { get; set; }
+        internal virtual ICollection<attendance> attendances { get; set; }
+        internal virtual ICollection<leav> leavs { get; set; }
     }
 }

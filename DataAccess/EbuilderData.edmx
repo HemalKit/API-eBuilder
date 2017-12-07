@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ebuilderModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ebuilderModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="attendance">
           <Key>
             <PropertyRef Name="AID" />
@@ -84,8 +84,7 @@
             <End Role="leav" EntitySet="leav" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ebuilderModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -117,8 +116,8 @@
           <Property Name="street" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="city" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="jobCategory" Type="String" MaxLength="65532" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="attendances" Relationship="Self.attendance_ibfk_1" FromRole="employee" ToRole="attendance" />
-          <NavigationProperty Name="leavs" Relationship="Self.leav_ibfk_1" FromRole="employee" ToRole="leav" />
+          <NavigationProperty Name="attendances" Relationship="Self.attendance_ibfk_1" FromRole="employee" ToRole="attendance" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="leavs" Relationship="Self.leav_ibfk_1" FromRole="employee" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
         <EntityType Name="leav">
           <Key>
