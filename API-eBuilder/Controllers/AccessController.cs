@@ -11,7 +11,7 @@ namespace API_eBuilder.Controllers
 {
     public class AccessController : ApiController
     {
-        public bool Get(Login login)
+        public bool Post([FromBody]Login login)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
             {
