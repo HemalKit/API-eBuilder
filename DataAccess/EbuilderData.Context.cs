@@ -28,5 +28,7 @@ namespace DataAccess
         public DbSet<attendance> attendances { get; set; }
         public DbSet<employee> employees { get; set; }
         public DbSet<leav> leavs { get; set; }
+        public DbSet<task> tasks { get; set; }
+        public DbSet<duty_leave> duty_leave { get; set; }
     }
 }

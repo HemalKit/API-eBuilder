@@ -18,6 +18,8 @@ namespace DataAccess
         {
             this.attendances = new HashSet<attendance>();
             this.leavs = new HashSet<leav>();
+            this.tasks = new HashSet<task>();
+            this.duty_leave = new HashSet<duty_leave>();
         }
     
         public string EID { get; set; }
@@ -36,5 +38,7 @@ namespace DataAccess
     
         internal virtual ICollection<attendance> attendances { get; set; }
         internal virtual ICollection<leav> leavs { get; set; }
+        internal virtual ICollection<task> tasks { get; set; }
+        internal virtual ICollection<duty_leave> duty_leave { get; set; }
     }
 }

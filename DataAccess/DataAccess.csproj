@@ -50,6 +50,9 @@
     <Compile Include="attendance.cs">
       <DependentUpon>EbuilderData.tt</DependentUpon>
     </Compile>
+    <Compile Include="duty_leave.cs">
+      <DependentUpon>EbuilderData.tt</DependentUpon>
+    </Compile>
     <Compile Include="EbuilderData.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -72,6 +75,9 @@
       <DependentUpon>EbuilderData.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="task.cs">
+      <DependentUpon>EbuilderData.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="EbuilderData.edmx">

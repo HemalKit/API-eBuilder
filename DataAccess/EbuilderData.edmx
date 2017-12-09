@@ -15,6 +15,16 @@
           <Property Name="checkOut" Type="time" Precision="0" />
           <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="duty_leave">
+          <Key>
+            <PropertyRef Name="DLID" />
+          </Key>
+          <Property Name="DLID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="appointmentTime" Type="time" Precision="0" Nullable="false" />
+          <Property Name="duration" Type="time" Precision="0" />
+          <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="employee">
           <Key>
             <PropertyRef Name="EID" />
@@ -43,6 +53,17 @@
           <Property Name="category" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="task">
+          <Key>
+            <PropertyRef Name="TID" />
+          </Key>
+          <Property Name="TID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="time" Type="time" Precision="0" Nullable="false" />
+          <Property Name="activity" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="status" Type="enum" Nullable="false" />
+          <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <Association Name="attendance_ibfk_1">
           <End Role="employee" Type="Self.employee" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -53,6 +74,20 @@
               <PropertyRef Name="EID" />
             </Principal>
             <Dependent Role="attendance">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="duty_leave_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="duty_leave" Type="Self.duty_leave" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="duty_leave">
               <PropertyRef Name="EID" />
             </Dependent>
           </ReferentialConstraint>
@@ -71,17 +106,41 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="task_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="task" Type="Self.task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="task">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="ebuilderModelStoreContainer">
           <EntitySet Name="attendance" EntityType="Self.attendance" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="duty_leave" EntityType="Self.duty_leave" Schema="ebuilder" store:Type="Tables" />
           <EntitySet Name="employee" EntityType="Self.employee" Schema="ebuilder" store:Type="Tables" />
           <EntitySet Name="leav" EntityType="Self.leav" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="task" EntityType="Self.task" Schema="ebuilder" store:Type="Tables" />
           <AssociationSet Name="attendance_ibfk_1" Association="Self.attendance_ibfk_1">
             <End Role="employee" EntitySet="employee" />
             <End Role="attendance" EntitySet="attendance" />
           </AssociationSet>
+          <AssociationSet Name="duty_leave_ibfk_1" Association="Self.duty_leave_ibfk_1">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="duty_leave" EntitySet="duty_leave" />
+          </AssociationSet>
           <AssociationSet Name="leav_ibfk_1" Association="Self.leav_ibfk_1">
             <End Role="employee" EntitySet="employee" />
             <End Role="leav" EntitySet="leav" />
+          </AssociationSet>
+          <AssociationSet Name="task_ibfk_1" Association="Self.task_ibfk_1">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="task" EntitySet="task" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -118,6 +177,8 @@
           <Property Name="jobCategory" Type="String" MaxLength="65532" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="attendances" Relationship="Self.attendance_ibfk_1" FromRole="employee" ToRole="attendance" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="leavs" Relationship="Self.leav_ibfk_1" FromRole="employee" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="tasks" Relationship="ebuilderModel.task_ibfk_1" FromRole="employee" ToRole="task" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="duty_leave" Relationship="ebuilderModel.duty_leave_ibfk_1" FromRole="employee" ToRole="duty_leave" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
         <EntityType Name="leav">
           <Key>
@@ -170,7 +231,68 @@
             <End Role="employee" EntitySet="employees" />
             <End Role="leav" EntitySet="leavs" />
           </AssociationSet>
+          <EntitySet Name="tasks" EntityType="ebuilderModel.task" />
+          <AssociationSet Name="task_ibfk_1" Association="ebuilderModel.task_ibfk_1">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="task" EntitySet="tasks" />
+          </AssociationSet>
+          <EntitySet Name="duty_leave" EntityType="ebuilderModel.duty_leave" />
+          <AssociationSet Name="duty_leave_ibfk_1" Association="ebuilderModel.duty_leave_ibfk_1">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="duty_leave" EntitySet="duty_leave" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="task">
+          <Key>
+            <PropertyRef Name="TID" />
+          </Key>
+          <Property Name="TID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" />
+          <Property Name="time" Type="Time" Nullable="false" />
+          <Property Name="activity" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="65532" FixedLength="false" Unicode="false" />
+          <Property Name="EID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="employee" Relationship="ebuilderModel.task_ibfk_1" FromRole="task" ToRole="employee" />
+        </EntityType>
+        <Association Name="task_ibfk_1">
+          <End Type="ebuilderModel.employee" Role="employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ebuilderModel.task" Role="task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="task">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="duty_leave">
+          <Key>
+            <PropertyRef Name="DLID" />
+          </Key>
+          <Property Name="DLID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" />
+          <Property Name="appointmentTime" Type="Time" Nullable="false" />
+          <Property Name="duration" Type="Time" />
+          <Property Name="EID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="employee" Relationship="ebuilderModel.duty_leave_ibfk_1" FromRole="duty_leave" ToRole="employee" />
+        </EntityType>
+        <Association Name="duty_leave_ibfk_1">
+          <End Type="ebuilderModel.employee" Role="employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ebuilderModel.duty_leave" Role="duty_leave" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="duty_leave">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -215,6 +337,29 @@
                 <ScalarProperty Name="reason" ColumnName="reason" />
                 <ScalarProperty Name="category" ColumnName="category" />
                 <ScalarProperty Name="EID" ColumnName="EID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tasks">
+            <EntityTypeMapping TypeName="ebuilderModel.task">
+              <MappingFragment StoreEntitySet="task">
+                <ScalarProperty Name="EID" ColumnName="EID" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="activity" ColumnName="activity" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="TID" ColumnName="TID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="duty_leave">
+            <EntityTypeMapping TypeName="ebuilderModel.duty_leave">
+              <MappingFragment StoreEntitySet="duty_leave">
+                <ScalarProperty Name="EID" ColumnName="EID" />
+                <ScalarProperty Name="duration" ColumnName="duration" />
+                <ScalarProperty Name="appointmentTime" ColumnName="appointmentTime" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="DLID" ColumnName="DLID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

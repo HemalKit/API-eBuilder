@@ -10,6 +10,10 @@
         <EntityTypeShape EntityType="ebuilderModel.leav" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
         <AssociationConnector Association="ebuilderModel.attendance_ibfk_1" ManuallyRouted="false" />
         <AssociationConnector Association="ebuilderModel.leav_ibfk_1" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ebuilderModel.task" Width="1.5" PointX="5.375" PointY="0.75" />
+        <AssociationConnector Association="ebuilderModel.task_ibfk_1" />
+        <EntityTypeShape EntityType="ebuilderModel.duty_leave" Width="1.5" PointX="3" PointY="7.625" />
+        <AssociationConnector Association="ebuilderModel.duty_leave_ibfk_1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

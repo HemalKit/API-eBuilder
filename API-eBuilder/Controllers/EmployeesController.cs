@@ -23,24 +23,43 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public employee Get(string id)
+        public HttpResponseMessage Get(string id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
             {
-                return entities.employees.FirstOrDefault(e => e.EID == id);
+                var entity = entities.employees.FirstOrDefault(e => e.EID == id);
+                if(entity != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+                else
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Employee with the EID " + id + " not Found");
+                }
 
             }
         }
 
 
         
-        public void Post([FromBody] employee emp)
+        public HttpResponseMessage Post([FromBody] employee emp)
         {
-            using (ebuilderEntities entities = new ebuilderEntities())
+            try
             {
-                emp.password = Crypto.Hash(emp.password);
-                entities.employees.Add(emp);
-                entities.SaveChanges();
+
+                using (ebuilderEntities entities = new ebuilderEntities())
+                {
+                    emp.password = Crypto.Hash(emp.password);
+                    entities.employees.Add(emp);
+                    entities.SaveChanges();
+                    var message = Request.CreateResponse(HttpStatusCode.Created, emp);
+                    message.Headers.Location = new Uri(Request.RequestUri + emp.EID);
+                    return message;
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 
@@ -51,10 +70,10 @@ namespace API_eBuilder.Controllers
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
-                    var emp = entities.employees.FirstOrDefault(e => e.EID == id);
-                    if(emp != null)
+                    var entity = entities.employees.FirstOrDefault(e => e.EID == id);
+                    if(entity != null)
                     {
-                        entities.employees.Remove(emp);
+                        entities.employees.Remove(entity);
                         entities.SaveChanges();
                         return Request.CreateResponse(HttpStatusCode.OK);
                     }
