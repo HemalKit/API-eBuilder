@@ -36,6 +36,56 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        public HttpResponseMessage Get(DateTime date, string leaveCategory="all", string jobCategory ="all", string EID = "all")
+        {
+            try
+            {
+                using (ebuilderEntities entities = new ebuilderEntities())
+                {
+                    if (leaveCategory == "all" && jobCategory == "all" && EID == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date).ToList());
+                    }
+                    else if(leaveCategory == "all" && jobCategory == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date && l.EID == EID).ToList());
+                    }
+                    else if(leaveCategory == "all" && EID == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date && l.jobCategory == jobCategory).ToList());
+                    }
+                    else if(jobCategory == "all" && EID == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory).ToList());
+                    }
+                    else if(leaveCategory == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date && l.jobCategory == jobCategory && l.EID == EID).ToList());
+                    }
+                    else if(jobCategory == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory && l.EID == EID).ToList());
+                    }
+                    else if(EID == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory && l.jobCategory == jobCategory).ToList());
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.leavs.Where(l => l.date == date && l.jobCategory == jobCategory && l.leaveCategory == leaveCategory && l.EID == EID).ToList());
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+
+            }
+
+
+        }
+
         public HttpResponseMessage Post([FromBody] leav leave)
         {
             try
@@ -96,7 +146,7 @@ namespace API_eBuilder.Controllers
                     else
                     {
                         entity.date = leave.date;
-                        entity.category = leave.category;
+                        entity.leaveCategory = leave.leaveCategory;
                         entity.reason = leave.reason;
 
                         entities.SaveChanges();

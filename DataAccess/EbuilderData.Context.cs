@@ -30,5 +30,9 @@ namespace DataAccess
         public DbSet<leav> leavs { get; set; }
         public DbSet<task> tasks { get; set; }
         public DbSet<duty_leave> duty_leave { get; set; }
+        public DbSet<leave_type> leave_type { get; set; }
+        public DbSet<approval> approvals { get; set; }
+        public DbSet<notification> notifications { get; set; }
+        public DbSet<tracking> trackings { get; set; }
     }
 }

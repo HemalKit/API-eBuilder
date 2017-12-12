@@ -12,22 +12,18 @@ namespace DataAccess
     using System;
     using System.Collections.Generic;
     
-    public partial class duty_leave
+    public partial class notification
     {
-        public duty_leave()
+        public notification()
         {
-            this.trackings = new HashSet<tracking>();
+            this.employees = new HashSet<employee>();
         }
     
-        public int DLID { get; set; }
+        public int NID { get; set; }
         public System.DateTime date { get; set; }
-        public System.TimeSpan appointmentTime { get; set; }
-        public Nullable<System.TimeSpan> duration { get; set; }
-        public string EID { get; set; }
-        public float longitude { get; set; }
-        public float latitude { get; set; }
+        public System.TimeSpan time { get; set; }
+        public string content { get; set; }
     
-        public virtual employee employee { get; set; }
-        internal virtual ICollection<tracking> trackings { get; set; }
+        internal virtual ICollection<employee> employees { get; set; }
     }
 }

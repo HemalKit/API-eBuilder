@@ -20,6 +20,10 @@ namespace DataAccess
             this.leavs = new HashSet<leav>();
             this.tasks = new HashSet<task>();
             this.duty_leave = new HashSet<duty_leave>();
+            this.employee1 = new HashSet<employee>();
+            this.employees = new HashSet<employee>();
+            this.notifications = new HashSet<notification>();
+            this.approvals = new HashSet<approval>();
         }
     
         public string EID { get; set; }
@@ -40,5 +44,9 @@ namespace DataAccess
         internal virtual ICollection<leav> leavs { get; set; }
         internal virtual ICollection<task> tasks { get; set; }
         internal virtual ICollection<duty_leave> duty_leave { get; set; }
+        internal virtual ICollection<employee> employee1 { get; set; }
+        internal virtual ICollection<employee> employees { get; set; }
+        internal virtual ICollection<notification> notifications { get; set; }
+        internal virtual ICollection<approval> approvals { get; set; }
     }
 }

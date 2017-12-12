@@ -12,22 +12,17 @@ namespace DataAccess
     using System;
     using System.Collections.Generic;
     
-    public partial class leav
+    public partial class leave_type
     {
-        public leav()
+        public leave_type()
         {
-            this.approvals = new HashSet<approval>();
+            this.leavs = new HashSet<leav>();
         }
     
-        public int LID { get; set; }
-        public System.DateTime date { get; set; }
-        public string reason { get; set; }
-        public string EID { get; set; }
-        public string leaveCategory { get; set; }
         public string jobCategory { get; set; }
+        public string leaveCategory { get; set; }
+        public int maxAllowed { get; set; }
     
-        internal virtual employee employee { get; set; }
-        internal virtual leave_type leave_type { get; set; }
-        internal virtual ICollection<approval> approvals { get; set; }
+        internal virtual ICollection<leav> leavs { get; set; }
     }
 }

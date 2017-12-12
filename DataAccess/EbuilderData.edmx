@@ -5,6 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="ebuilderModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="approval">
+          <Key>
+            <PropertyRef Name="APID" />
+          </Key>
+          <Property Name="APID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LID" Type="int" Nullable="false" />
+          <Property Name="status" Type="enum" Nullable="false" />
+          <Property Name="ManagerID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="attendance">
           <Key>
             <PropertyRef Name="AID" />
@@ -23,6 +32,8 @@
           <Property Name="date" Type="date" Nullable="false" />
           <Property Name="appointmentTime" Type="time" Precision="0" Nullable="false" />
           <Property Name="duration" Type="time" Precision="0" />
+          <Property Name="longitude" Type="float" Nullable="false" />
+          <Property Name="latitude" Type="float" Nullable="false" />
           <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="employee">
@@ -50,7 +61,42 @@
           <Property Name="LID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
           <Property Name="reason" Type="varchar" MaxLength="1000" />
-          <Property Name="category" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="leaveCategory" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="jobCategory" Type="enum" Nullable="false" />
+          <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="leave_type">
+          <Key>
+            <PropertyRef Name="jobCategory" />
+            <PropertyRef Name="leaveCategory" />
+          </Key>
+          <Property Name="jobCategory" Type="enum" Nullable="false" />
+          <Property Name="leaveCategory" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="maxAllowed" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="managed_by">
+          <Key>
+            <PropertyRef Name="ManagerID" />
+            <PropertyRef Name="EID" />
+          </Key>
+          <Property Name="ManagerID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="notification">
+          <Key>
+            <PropertyRef Name="NID" />
+          </Key>
+          <Property Name="NID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="time" Type="time" Precision="0" Nullable="false" />
+          <Property Name="content" Type="text" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sent_to">
+          <Key>
+            <PropertyRef Name="NID" />
+            <PropertyRef Name="EID" />
+          </Key>
+          <Property Name="NID" Type="int" Nullable="false" />
           <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="task">
@@ -64,6 +110,44 @@
           <Property Name="status" Type="enum" Nullable="false" />
           <Property Name="EID" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="tracking">
+          <Key>
+            <PropertyRef Name="TRID" />
+          </Key>
+          <Property Name="TRID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="longitude" Type="float" Nullable="false" />
+          <Property Name="latitude" Type="float" Nullable="false" />
+          <Property Name="time" Type="time" Precision="0" Nullable="false" />
+          <Property Name="DLID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="approval_ibfk_1">
+          <End Role="leav" Type="Self.leav" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="approval" Type="Self.approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="leav">
+              <PropertyRef Name="LID" />
+            </Principal>
+            <Dependent Role="approval">
+              <PropertyRef Name="LID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="approval_ibfk_2">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="approval" Type="Self.approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="approval">
+              <PropertyRef Name="ManagerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="attendance_ibfk_1">
           <End Role="employee" Type="Self.employee" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -106,6 +190,68 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="leav_ibfk_2">
+          <End Role="leave_type" Type="Self.leave_type" Multiplicity="1" />
+          <End Role="leav" Type="Self.leav" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="leave_type">
+              <PropertyRef Name="jobCategory" />
+              <PropertyRef Name="leaveCategory" />
+            </Principal>
+            <Dependent Role="leav">
+              <PropertyRef Name="jobCategory" />
+              <PropertyRef Name="leaveCategory" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="managed_by_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+          <End Role="managed_by" Type="Self.managed_by" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="managed_by">
+              <PropertyRef Name="ManagerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="managed_by_ibfk_2">
+          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+          <End Role="managed_by" Type="Self.managed_by" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="managed_by">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="sent_to_ibfk_1">
+          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+          <End Role="sent_to" Type="Self.sent_to" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="sent_to">
+              <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="sent_to_ibfk_2">
+          <End Role="notification" Type="Self.notification" Multiplicity="1" />
+          <End Role="sent_to" Type="Self.sent_to" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="notification">
+              <PropertyRef Name="NID" />
+            </Principal>
+            <Dependent Role="sent_to">
+              <PropertyRef Name="NID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="task_ibfk_1">
           <End Role="employee" Type="Self.employee" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -120,12 +266,38 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="tracking_ibfk_1">
+          <End Role="duty_leave" Type="Self.duty_leave" Multiplicity="1" />
+          <End Role="tracking" Type="Self.tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="duty_leave">
+              <PropertyRef Name="DLID" />
+            </Principal>
+            <Dependent Role="tracking">
+              <PropertyRef Name="DLID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="ebuilderModelStoreContainer">
+          <EntitySet Name="approval" EntityType="Self.approval" Schema="ebuilder" store:Type="Tables" />
           <EntitySet Name="attendance" EntityType="Self.attendance" Schema="ebuilder" store:Type="Tables" />
           <EntitySet Name="duty_leave" EntityType="Self.duty_leave" Schema="ebuilder" store:Type="Tables" />
           <EntitySet Name="employee" EntityType="Self.employee" Schema="ebuilder" store:Type="Tables" />
           <EntitySet Name="leav" EntityType="Self.leav" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="leave_type" EntityType="Self.leave_type" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="managed_by" EntityType="Self.managed_by" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="notification" EntityType="Self.notification" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="sent_to" EntityType="Self.sent_to" Schema="ebuilder" store:Type="Tables" />
           <EntitySet Name="task" EntityType="Self.task" Schema="ebuilder" store:Type="Tables" />
+          <EntitySet Name="tracking" EntityType="Self.tracking" Schema="ebuilder" store:Type="Tables" />
+          <AssociationSet Name="approval_ibfk_1" Association="Self.approval_ibfk_1">
+            <End Role="leav" EntitySet="leav" />
+            <End Role="approval" EntitySet="approval" />
+          </AssociationSet>
+          <AssociationSet Name="approval_ibfk_2" Association="Self.approval_ibfk_2">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="approval" EntitySet="approval" />
+          </AssociationSet>
           <AssociationSet Name="attendance_ibfk_1" Association="Self.attendance_ibfk_1">
             <End Role="employee" EntitySet="employee" />
             <End Role="attendance" EntitySet="attendance" />
@@ -138,9 +310,33 @@
             <End Role="employee" EntitySet="employee" />
             <End Role="leav" EntitySet="leav" />
           </AssociationSet>
+          <AssociationSet Name="leav_ibfk_2" Association="Self.leav_ibfk_2">
+            <End Role="leave_type" EntitySet="leave_type" />
+            <End Role="leav" EntitySet="leav" />
+          </AssociationSet>
+          <AssociationSet Name="managed_by_ibfk_1" Association="Self.managed_by_ibfk_1">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="managed_by" EntitySet="managed_by" />
+          </AssociationSet>
+          <AssociationSet Name="managed_by_ibfk_2" Association="Self.managed_by_ibfk_2">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="managed_by" EntitySet="managed_by" />
+          </AssociationSet>
+          <AssociationSet Name="sent_to_ibfk_1" Association="Self.sent_to_ibfk_1">
+            <End Role="employee" EntitySet="employee" />
+            <End Role="sent_to" EntitySet="sent_to" />
+          </AssociationSet>
+          <AssociationSet Name="sent_to_ibfk_2" Association="Self.sent_to_ibfk_2">
+            <End Role="notification" EntitySet="notification" />
+            <End Role="sent_to" EntitySet="sent_to" />
+          </AssociationSet>
           <AssociationSet Name="task_ibfk_1" Association="Self.task_ibfk_1">
             <End Role="employee" EntitySet="employee" />
             <End Role="task" EntitySet="task" />
+          </AssociationSet>
+          <AssociationSet Name="tracking_ibfk_1" Association="Self.tracking_ibfk_1">
+            <End Role="duty_leave" EntitySet="duty_leave" />
+            <End Role="tracking" EntitySet="tracking" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -179,6 +375,10 @@
           <NavigationProperty Name="leavs" Relationship="Self.leav_ibfk_1" FromRole="employee" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="tasks" Relationship="ebuilderModel.task_ibfk_1" FromRole="employee" ToRole="task" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="duty_leave" Relationship="ebuilderModel.duty_leave_ibfk_1" FromRole="employee" ToRole="duty_leave" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="employee1" Relationship="ebuilderModel.managed_by" FromRole="employee" ToRole="employee1" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="employees" Relationship="ebuilderModel.managed_by" FromRole="employee1" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="notifications" Relationship="ebuilderModel.sent_to" FromRole="employee" ToRole="notification" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="approvals" Relationship="ebuilderModel.approval_ibfk_2" FromRole="employee" ToRole="approval" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
         <EntityType Name="leav">
           <Key>
@@ -187,9 +387,12 @@
           <Property Name="LID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="date" Type="DateTime" Nullable="false" />
           <Property Name="reason" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="category" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="EID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="employee" Relationship="Self.leav_ibfk_1" FromRole="leav" ToRole="employee" />
+          <NavigationProperty Name="employee" Relationship="Self.leav_ibfk_1" FromRole="leav" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <Property Name="leaveCategory" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="jobCategory" Type="String" Nullable="false" MaxLength="65532" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="leave_type" Relationship="ebuilderModel.leav_ibfk_2" FromRole="leav" ToRole="leave_type" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="approvals" Relationship="ebuilderModel.approval_ibfk_1" FromRole="leav" ToRole="approval" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
         <Association Name="attendance_ibfk_1">
           <End Role="employee" Type="Self.employee" Multiplicity="1">
@@ -241,6 +444,34 @@
             <End Role="employee" EntitySet="employees" />
             <End Role="duty_leave" EntitySet="duty_leave" />
           </AssociationSet>
+          <EntitySet Name="leave_type" EntityType="ebuilderModel.leave_type" />
+          <AssociationSet Name="leav_ibfk_2" Association="ebuilderModel.leav_ibfk_2">
+            <End Role="leave_type" EntitySet="leave_type" />
+            <End Role="leav" EntitySet="leavs" />
+          </AssociationSet>
+          <EntitySet Name="approvals" EntityType="ebuilderModel.approval" />
+          <EntitySet Name="notifications" EntityType="ebuilderModel.notification" />
+          <EntitySet Name="trackings" EntityType="ebuilderModel.tracking" />
+          <AssociationSet Name="approval_ibfk_1" Association="ebuilderModel.approval_ibfk_1">
+            <End Role="leav" EntitySet="leavs" />
+            <End Role="approval" EntitySet="approvals" />
+          </AssociationSet>
+          <AssociationSet Name="tracking_ibfk_1" Association="ebuilderModel.tracking_ibfk_1">
+            <End Role="duty_leave" EntitySet="duty_leave" />
+            <End Role="tracking" EntitySet="trackings" />
+          </AssociationSet>
+          <AssociationSet Name="managed_by" Association="ebuilderModel.managed_by">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="employee1" EntitySet="employees" />
+          </AssociationSet>
+          <AssociationSet Name="sent_to" Association="ebuilderModel.sent_to">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="notification" EntitySet="notifications" />
+          </AssociationSet>
+          <AssociationSet Name="approval_ibfk_2" Association="ebuilderModel.approval_ibfk_2">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="approval" EntitySet="approvals" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="task">
           <Key>
@@ -252,7 +483,7 @@
           <Property Name="activity" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="status" Type="String" Nullable="false" MaxLength="65532" FixedLength="false" Unicode="false" />
           <Property Name="EID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="employee" Relationship="ebuilderModel.task_ibfk_1" FromRole="task" ToRole="employee" />
+          <NavigationProperty Name="employee" Relationship="ebuilderModel.task_ibfk_1" FromRole="task" ToRole="employee" a:GetterAccess="Public" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Public" />
         </EntityType>
         <Association Name="task_ibfk_1">
           <End Type="ebuilderModel.employee" Role="employee" Multiplicity="1">
@@ -278,6 +509,9 @@
           <Property Name="duration" Type="Time" />
           <Property Name="EID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="employee" Relationship="ebuilderModel.duty_leave_ibfk_1" FromRole="duty_leave" ToRole="employee" />
+          <Property Name="longitude" Type="Single" Nullable="false" />
+          <Property Name="latitude" Type="Single" Nullable="false" />
+          <NavigationProperty Name="trackings" Relationship="ebuilderModel.tracking_ibfk_1" FromRole="duty_leave" ToRole="tracking" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
         <Association Name="duty_leave_ibfk_1">
           <End Type="ebuilderModel.employee" Role="employee" Multiplicity="1">
@@ -290,6 +524,110 @@
             </Principal>
             <Dependent Role="duty_leave">
               <PropertyRef Name="EID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="leave_type">
+          <Key>
+            <PropertyRef Name="jobCategory" />
+            <PropertyRef Name="leaveCategory" />
+          </Key>
+          <Property Name="jobCategory" Type="String" Nullable="false" MaxLength="65532" FixedLength="false" Unicode="false" />
+          <Property Name="leaveCategory" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="maxAllowed" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="leavs" Relationship="ebuilderModel.leav_ibfk_2" FromRole="leave_type" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+        </EntityType>
+        <Association Name="leav_ibfk_2">
+          <End Type="ebuilderModel.leave_type" Role="leave_type" Multiplicity="1" />
+          <End Type="ebuilderModel.leav" Role="leav" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="leave_type">
+              <PropertyRef Name="jobCategory" />
+              <PropertyRef Name="leaveCategory" />
+            </Principal>
+            <Dependent Role="leav">
+              <PropertyRef Name="jobCategory" />
+              <PropertyRef Name="leaveCategory" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="approval">
+          <Key>
+            <PropertyRef Name="APID" />
+          </Key>
+          <Property Name="APID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LID" Type="Int32" Nullable="false" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="65532" FixedLength="false" Unicode="false" />
+          <Property Name="ManagerID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="leav" Relationship="ebuilderModel.approval_ibfk_1" FromRole="approval" ToRole="leav" />
+          <NavigationProperty Name="employee" Relationship="ebuilderModel.approval_ibfk_2" FromRole="approval" ToRole="employee" />
+        </EntityType>
+        <EntityType Name="notification">
+          <Key>
+            <PropertyRef Name="NID" />
+          </Key>
+          <Property Name="NID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" />
+          <Property Name="time" Type="Time" Nullable="false" />
+          <Property Name="content" Type="String" Nullable="false" MaxLength="65535" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="employees" Relationship="ebuilderModel.sent_to" FromRole="notification" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+        </EntityType>
+        <EntityType Name="tracking">
+          <Key>
+            <PropertyRef Name="TRID" />
+          </Key>
+          <Property Name="TRID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="longitude" Type="Single" Nullable="false" />
+          <Property Name="latitude" Type="Single" Nullable="false" />
+          <Property Name="time" Type="Time" Nullable="false" />
+          <Property Name="DLID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="duty_leave" Relationship="ebuilderModel.tracking_ibfk_1" FromRole="tracking" ToRole="duty_leave" />
+        </EntityType>
+        <Association Name="approval_ibfk_1">
+          <End Type="ebuilderModel.leav" Role="leav" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ebuilderModel.approval" Role="approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="leav">
+              <PropertyRef Name="LID" />
+            </Principal>
+            <Dependent Role="approval">
+              <PropertyRef Name="LID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="tracking_ibfk_1">
+          <End Type="ebuilderModel.duty_leave" Role="duty_leave" Multiplicity="1" />
+          <End Type="ebuilderModel.tracking" Role="tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="duty_leave">
+              <PropertyRef Name="DLID" />
+            </Principal>
+            <Dependent Role="tracking">
+              <PropertyRef Name="DLID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="managed_by">
+          <End Type="ebuilderModel.employee" Role="employee" Multiplicity="*" />
+          <End Type="ebuilderModel.employee" Role="employee1" Multiplicity="*" />
+        </Association>
+        <Association Name="sent_to">
+          <End Type="ebuilderModel.employee" Role="employee" Multiplicity="*" />
+          <End Type="ebuilderModel.notification" Role="notification" Multiplicity="*" />
+        </Association>
+        <Association Name="approval_ibfk_2">
+          <End Type="ebuilderModel.employee" Role="employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ebuilderModel.approval" Role="approval" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="EID" />
+            </Principal>
+            <Dependent Role="approval">
+              <PropertyRef Name="ManagerID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -332,10 +670,11 @@
           <EntitySetMapping Name="leavs">
             <EntityTypeMapping TypeName="ebuilderModel.leav">
               <MappingFragment StoreEntitySet="leav">
+                <ScalarProperty Name="jobCategory" ColumnName="jobCategory" />
+                <ScalarProperty Name="leaveCategory" ColumnName="leaveCategory" />
                 <ScalarProperty Name="LID" ColumnName="LID" />
                 <ScalarProperty Name="date" ColumnName="date" />
                 <ScalarProperty Name="reason" ColumnName="reason" />
-                <ScalarProperty Name="category" ColumnName="category" />
                 <ScalarProperty Name="EID" ColumnName="EID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -355,6 +694,8 @@
           <EntitySetMapping Name="duty_leave">
             <EntityTypeMapping TypeName="ebuilderModel.duty_leave">
               <MappingFragment StoreEntitySet="duty_leave">
+                <ScalarProperty Name="latitude" ColumnName="latitude" />
+                <ScalarProperty Name="longitude" ColumnName="longitude" />
                 <ScalarProperty Name="EID" ColumnName="EID" />
                 <ScalarProperty Name="duration" ColumnName="duration" />
                 <ScalarProperty Name="appointmentTime" ColumnName="appointmentTime" />
@@ -363,6 +704,62 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="leave_type">
+            <EntityTypeMapping TypeName="ebuilderModel.leave_type">
+              <MappingFragment StoreEntitySet="leave_type">
+                <ScalarProperty Name="maxAllowed" ColumnName="maxAllowed" />
+                <ScalarProperty Name="leaveCategory" ColumnName="leaveCategory" />
+                <ScalarProperty Name="jobCategory" ColumnName="jobCategory" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="approvals">
+            <EntityTypeMapping TypeName="ebuilderModel.approval">
+              <MappingFragment StoreEntitySet="approval">
+                <ScalarProperty Name="ManagerID" ColumnName="ManagerID" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="LID" ColumnName="LID" />
+                <ScalarProperty Name="APID" ColumnName="APID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="notifications">
+            <EntityTypeMapping TypeName="ebuilderModel.notification">
+              <MappingFragment StoreEntitySet="notification">
+                <ScalarProperty Name="content" ColumnName="content" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="NID" ColumnName="NID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="trackings">
+            <EntityTypeMapping TypeName="ebuilderModel.tracking">
+              <MappingFragment StoreEntitySet="tracking">
+                <ScalarProperty Name="DLID" ColumnName="DLID" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="latitude" ColumnName="latitude" />
+                <ScalarProperty Name="longitude" ColumnName="longitude" />
+                <ScalarProperty Name="TRID" ColumnName="TRID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="managed_by" TypeName="ebuilderModel.managed_by" StoreEntitySet="managed_by">
+            <EndProperty Name="employee1">
+              <ScalarProperty Name="EID" ColumnName="EID" />
+            </EndProperty>
+            <EndProperty Name="employee">
+              <ScalarProperty Name="EID" ColumnName="ManagerID" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="sent_to" TypeName="ebuilderModel.sent_to" StoreEntitySet="sent_to">
+            <EndProperty Name="notification">
+              <ScalarProperty Name="NID" ColumnName="NID" />
+            </EndProperty>
+            <EndProperty Name="employee">
+              <ScalarProperty Name="EID" ColumnName="EID" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
