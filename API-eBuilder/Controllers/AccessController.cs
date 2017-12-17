@@ -15,7 +15,7 @@ namespace API_eBuilder.Controllers
         {
             using (ebuilderEntities entities = new ebuilderEntities())
             {
-                var emp = entities.employees.Where(e => e.EID == login.EID).FirstOrDefault();
+                var emp = entities.employees.Where(e => e.email == login.email).FirstOrDefault();
                 if (emp != null)
                 {
                     if (string.Compare(Crypto.Hash(login.password), emp.password) == 0)

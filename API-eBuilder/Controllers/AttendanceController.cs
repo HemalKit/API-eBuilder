@@ -37,6 +37,29 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        public HttpResponseMessage Get(DateTime date,string EID = "all")
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    if(EID == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,entities.attendances.Where(a => a.date == date).ToList());
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,entities.attendances.Where(a => a.date == date && a.EID == EID).ToList());
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        } 
+
 
         public HttpResponseMessage Post([FromBody] attendance att)
         {

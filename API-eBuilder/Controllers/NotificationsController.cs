@@ -42,6 +42,30 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        public HttpResponseMessage Get(DateTime date, string EID = "all")
+        {
+            try
+            {
+                using(ebuilderEntities entites = new ebuilderEntities())
+                {
+                    if( EID == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entites.notifications.Where(n => n.date == date).ToList());
+
+                    }
+                    else
+                    {
+                        // Need to get the notifications related to a particular employee
+                        return Request.CreateResponse(HttpStatusCode.OK, entites.notifications.Where(n => n.date == date).ToList());                       
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
         public HttpResponseMessage Post([FromBody]notification not )
         {
             try

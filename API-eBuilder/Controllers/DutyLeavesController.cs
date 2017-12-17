@@ -36,6 +36,30 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        public HttpResponseMessage Get(DateTime date, string EID = "all")
+        {
+            try
+            {
+                using (ebuilderEntities entities = new ebuilderEntities())
+                {
+                    if (EID == "all")
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.duty_leave.Where(dl => dl.date == date).ToList());
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.duty_leave.Where(dl => dl.date == date && dl.EID == EID).ToList());
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
         public HttpResponseMessage Post([FromBody] duty_leave dutyLeave)
         {
             try
