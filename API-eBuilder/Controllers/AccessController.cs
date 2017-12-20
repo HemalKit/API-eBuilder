@@ -11,7 +11,7 @@ namespace API_eBuilder.Controllers
 {
     public class AccessController : ApiController
     {
-        public bool Post([FromBody]Login login)
+        public HttpResponseMessage Post([FromBody]Login login)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
             {
@@ -20,17 +20,20 @@ namespace API_eBuilder.Controllers
                 {
                     if (string.Compare(Crypto.Hash(login.password), emp.password) == 0)
                     {
-                        return true;
+                        var response =  Request.CreateResponse(HttpStatusCode.OK, emp);
+                        response.Headers.Location = new Uri("http://localhost:61355/api/Employees/" + emp.EID);
+                        return response;
                     }
                     else
                     {
-                        return false;
+                        var response = Request.CreateResponse(HttpStatusCode.NotFound, new employee());
+                        return response;
                     }
 
                 }
                 else
                 {
-                    return false;
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new employee());
                 }
             }
 
