@@ -20,6 +20,6 @@ namespace DataAccess
         public System.TimeSpan time { get; set; }
         public int DLID { get; set; }
     
-        public virtual duty_leave duty_leave { get; set; }
+        internal virtual duty_leave duty_leave { get; set; }
     }
 }

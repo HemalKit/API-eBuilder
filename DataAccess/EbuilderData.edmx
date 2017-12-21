@@ -581,7 +581,7 @@
           <Property Name="latitude" Type="Single" Nullable="false" />
           <Property Name="time" Type="Time" Nullable="false" />
           <Property Name="DLID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="duty_leave" Relationship="ebuilderModel.tracking_ibfk_1" FromRole="tracking" ToRole="duty_leave" />
+          <NavigationProperty Name="duty_leave" Relationship="ebuilderModel.tracking_ibfk_1" FromRole="tracking" ToRole="duty_leave" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
         <Association Name="approval_ibfk_1">
           <End Type="ebuilderModel.leav" Role="leav" Multiplicity="1">

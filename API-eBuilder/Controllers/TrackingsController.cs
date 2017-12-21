@@ -18,20 +18,20 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(int DLID )
         {
             try
             {
                 using(ebuilderEntities entities = new ebuilderEntities())
                 {
-                    var entity = entities.trackings.FirstOrDefault(t => t.TRID == id);
+                    var entity = entities.trackings.Where(t => t.DLID == DLID).ToList();
                     if(entity != null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, entity);
                     }
                     else
                     {
-                        return Request.CreateResponse(HttpStatusCode.NotFound, "Tracking with id " + id.ToString() + "not found");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, "Trackings for DLID " + DLID.ToString() + "not found");
                     }
                 }
             }
@@ -40,6 +40,7 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
+
 
         public HttpResponseMessage Post([FromBody] tracking tr)
         {
