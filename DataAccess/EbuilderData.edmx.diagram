@@ -4,26 +4,28 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="616d3b73b02f4f718b05ebe4278e0d20" Name="Diagram1" ZoomLevel="82">
-        <EntityTypeShape EntityType="ebuilderModel.attendance" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ebuilderModel.employee" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ebuilderModel.leav" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
-        <AssociationConnector Association="ebuilderModel.attendance_ibfk_1" ManuallyRouted="false" />
-        <AssociationConnector Association="ebuilderModel.leav_ibfk_1" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="ebuilderModel.task" Width="1.5" PointX="5.375" PointY="0.75" />
-        <AssociationConnector Association="ebuilderModel.task_ibfk_1" />
-        <EntityTypeShape EntityType="ebuilderModel.duty_leave" Width="1.5" PointX="3" PointY="7.625" />
-        <AssociationConnector Association="ebuilderModel.duty_leave_ibfk_1" />
-        <EntityTypeShape EntityType="ebuilderModel.leave_type" Width="1.5" PointX="5.375" PointY="4.875" />
-        <AssociationConnector Association="ebuilderModel.leav_ibfk_2" />
-        <EntityTypeShape EntityType="ebuilderModel.approval" Width="1.5" PointX="5.25" PointY="8.375" />
-        <EntityTypeShape EntityType="ebuilderModel.notification" Width="1.5" PointX="3" PointY="11.625" />
-        <EntityTypeShape EntityType="ebuilderModel.tracking" Width="1.5" PointX="5.25" PointY="11.875" />
-        <AssociationConnector Association="ebuilderModel.approval_ibfk_1" />
-        <AssociationConnector Association="ebuilderModel.tracking_ibfk_1" />
-        <AssociationConnector Association="ebuilderModel.managed_by" />
-        <AssociationConnector Association="ebuilderModel.sent_to" />
-        <AssociationConnector Association="ebuilderModel.approval_ibfk_2" />
+      <Diagram DiagramId="87f87a1217e9441fb14bf6a8c0e253f4" Name="Diagram1" ZoomLevel="94">
+        <EntityTypeShape EntityType="ebuilderModel.approval" Width="1.5" PointX="6" PointY="10" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.attendance" Width="1.5" PointX="3" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.contact" Width="1.5" PointX="3" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.duty_leave" Width="1.5" PointX="3" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.employee" Width="1.5" PointX="0.75" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.leav" Width="1.5" PointX="6" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.leave_type" Width="1.5" PointX="3.75" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.notification" Width="1.5" PointX="3" PointY="17.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.task" Width="1.5" PointX="3" PointY="19.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ebuilderModel.tracking" Width="1.5" PointX="5.25" PointY="13.75" IsExpanded="true" />
+        <AssociationConnector Association="ebuilderModel.FK__approval__LID__6754599E" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__approval__Manage__693CA210" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__attendance__EID__6A30C649" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__contact__EID__66603565" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__duty_leave__EID__6B24EA82" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__tracking__DLID__7F2BE32F" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__leav__EID__6D0D32F4" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__task__EID__7E37BEF6" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.FK__leav__74AE54BC" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.managed_by" ManuallyRouted="false" />
+        <AssociationConnector Association="ebuilderModel.sent_to" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
