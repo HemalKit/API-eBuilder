@@ -4,14 +4,14 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ebuilderModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ebuilderModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="approval">
           <Key>
             <PropertyRef Name="APID" />
           </Key>
           <Property Name="APID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LID" Type="int" Nullable="false" />
-          <Property Name="status" Type="nchar" MaxLength="1" />
+          <Property Name="status" Type="nvarchar" MaxLength="15" />
           <Property Name="ManagerID" Type="nvarchar" MaxLength="10" Nullable="false" />
         </EntityType>
         <EntityType Name="attendance">
@@ -68,9 +68,9 @@
           </Key>
           <Property Name="LID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
-          <Property Name="reason" Type="nvarchar" MaxLength="1" />
-          <Property Name="leaveCategory" Type="nvarchar" MaxLength="15" />
-          <Property Name="jobCategory" Type="nvarchar" MaxLength="10" />
+          <Property Name="reason" Type="nvarchar" MaxLength="100" />
+          <Property Name="leaveCategory" Type="nvarchar" MaxLength="20" />
+          <Property Name="jobCategory" Type="nvarchar" MaxLength="20" />
           <Property Name="EID" Type="nvarchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="leave_type">
@@ -78,8 +78,8 @@
             <PropertyRef Name="jobCategory" />
             <PropertyRef Name="leaveCategory" />
           </Key>
-          <Property Name="jobCategory" Type="nvarchar" MaxLength="10" Nullable="false" />
-          <Property Name="leaveCategory" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="jobCategory" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="leaveCategory" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="maxAllowed" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="managed_by">
@@ -128,7 +128,7 @@
           <Property Name="time" Type="time" Precision="7" Nullable="false" />
           <Property Name="DLID" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK__approval__LID__6754599E">
+        <Association Name="FK__approval__LID__2739D489">
           <End Role="leav" Type="Self.leav" Multiplicity="1" />
           <End Role="approval" Type="Self.approval" Multiplicity="*" />
           <ReferentialConstraint>
@@ -140,7 +140,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__approval__Manage__693CA210">
+        <Association Name="FK__approval__Manage__29221CFB">
           <End Role="employee" Type="Self.employee" Multiplicity="1" />
           <End Role="approval" Type="Self.approval" Multiplicity="*" />
           <ReferentialConstraint>
@@ -188,21 +188,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__leav__74AE54BC">
-          <End Role="leave_type" Type="Self.leave_type" Multiplicity="0..1" />
-          <End Role="leav" Type="Self.leav" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="leave_type">
-              <PropertyRef Name="jobCategory" />
-              <PropertyRef Name="leaveCategory" />
-            </Principal>
-            <Dependent Role="leav">
-              <PropertyRef Name="jobCategory" />
-              <PropertyRef Name="leaveCategory" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__leav__EID__6D0D32F4">
+        <Association Name="FK__leav__EID__236943A5">
           <End Role="employee" Type="Self.employee" Multiplicity="0..1" />
           <End Role="leav" Type="Self.leav" Multiplicity="*" />
           <ReferentialConstraint>
@@ -286,6 +272,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="Fk_leav">
+          <End Role="leave_type" Type="Self.leave_type" Multiplicity="0..1" />
+          <End Role="leav" Type="Self.leav" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="leave_type">
+              <PropertyRef Name="jobCategory" />
+              <PropertyRef Name="leaveCategory" />
+            </Principal>
+            <Dependent Role="leav">
+              <PropertyRef Name="jobCategory" />
+              <PropertyRef Name="leaveCategory" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="ebuilderModelStoreContainer">
           <EntitySet Name="approval" EntityType="Self.approval" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="attendance" EntityType="Self.attendance" Schema="dbo" store:Type="Tables" />
@@ -299,11 +299,11 @@
           <EntitySet Name="sent_to" EntityType="Self.sent_to" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="task" EntityType="Self.task" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tracking" EntityType="Self.tracking" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__approval__LID__6754599E" Association="Self.FK__approval__LID__6754599E">
+          <AssociationSet Name="FK__approval__LID__2739D489" Association="Self.FK__approval__LID__2739D489">
             <End Role="leav" EntitySet="leav" />
             <End Role="approval" EntitySet="approval" />
           </AssociationSet>
-          <AssociationSet Name="FK__approval__Manage__693CA210" Association="Self.FK__approval__Manage__693CA210">
+          <AssociationSet Name="FK__approval__Manage__29221CFB" Association="Self.FK__approval__Manage__29221CFB">
             <End Role="employee" EntitySet="employee" />
             <End Role="approval" EntitySet="approval" />
           </AssociationSet>
@@ -319,11 +319,7 @@
             <End Role="employee" EntitySet="employee" />
             <End Role="duty_leave" EntitySet="duty_leave" />
           </AssociationSet>
-          <AssociationSet Name="FK__leav__74AE54BC" Association="Self.FK__leav__74AE54BC">
-            <End Role="leave_type" EntitySet="leave_type" />
-            <End Role="leav" EntitySet="leav" />
-          </AssociationSet>
-          <AssociationSet Name="FK__leav__EID__6D0D32F4" Association="Self.FK__leav__EID__6D0D32F4">
+          <AssociationSet Name="FK__leav__EID__236943A5" Association="Self.FK__leav__EID__236943A5">
             <End Role="employee" EntitySet="employee" />
             <End Role="leav" EntitySet="leav" />
           </AssociationSet>
@@ -351,9 +347,12 @@
             <End Role="duty_leave" EntitySet="duty_leave" />
             <End Role="tracking" EntitySet="tracking" />
           </AssociationSet>
+          <AssociationSet Name="Fk_leav" Association="Self.Fk_leav">
+            <End Role="leave_type" EntitySet="leave_type" />
+            <End Role="leav" EntitySet="leav" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ebuilderModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -363,7 +362,7 @@
           </Key>
           <Property Name="APID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LID" Type="Int32" Nullable="false" />
-          <Property Name="status" Type="String" MaxLength="1" FixedLength="true" Unicode="true" />
+          <Property Name="status" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
           <Property Name="ManagerID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="leav" Relationship="Self.FK__approval__LID__6754599E" FromRole="approval" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="employee" Relationship="Self.FK__approval__Manage__693CA210" FromRole="approval" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
@@ -435,9 +434,9 @@
           </Key>
           <Property Name="LID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="reason" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
-          <Property Name="leaveCategory" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
-          <Property Name="jobCategory" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="reason" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="leaveCategory" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="jobCategory" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="EID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="approvals" Relationship="Self.FK__approval__LID__6754599E" FromRole="leav" ToRole="approval" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="employee" Relationship="Self.FK__leav__EID__6D0D32F4" FromRole="leav" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
@@ -448,8 +447,8 @@
             <PropertyRef Name="jobCategory" />
             <PropertyRef Name="leaveCategory" />
           </Key>
-          <Property Name="jobCategory" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="leaveCategory" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="jobCategory" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="leaveCategory" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="maxAllowed" Type="Int32" Nullable="false" />
           <NavigationProperty Name="leavs" Relationship="Self.FK__leav__74AE54BC" FromRole="leave_type" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>

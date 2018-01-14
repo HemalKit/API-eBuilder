@@ -10,13 +10,13 @@ namespace API_eBuilder.Controllers
 {
     public class NotificationsController : ApiController
     {
-        public IEnumerable<notification> Get()
+        /*public IEnumerable<notification> Get()
         {
             using(ebuilderEntities entities = new ebuilderEntities())
             {
                 return entities.notifications.ToList();
             }
-        }
+        }*/
 
         public HttpResponseMessage Get(int id)
         {
@@ -42,13 +42,31 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Get(DateTime date, string EID = "all")
+        public HttpResponseMessage Get(DateTime? date = null, string EID = "all")
         {
             try
             {
                 using(ebuilderEntities entites = new ebuilderEntities())
                 {
-                    if( EID == "all")
+
+                    var parameters = "";
+                    parameters += date == null ? "0" : "1";
+                    parameters += EID == "all" ? "0" : "1";
+
+                    var entity = new List<notification>();
+                    switch (parameters)
+                    {
+                        case "00":
+                            entity = entites.notifications.ToList();
+                            break;
+                        //case "01":
+                           // entity = entites.notifications.Where(n => n)
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+
+
+
+                    /*if( EID == "all")
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, entites.notifications.Where(n => n.date == date).ToList());
 
@@ -57,7 +75,7 @@ namespace API_eBuilder.Controllers
                     {
                         // Need to get the notifications related to a particular employee
                         return Request.CreateResponse(HttpStatusCode.OK, entites.notifications.Where(n => n.date == date).ToList());                       
-                    }
+                    }*/
                 }
             }
             catch(Exception ex)

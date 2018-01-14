@@ -19,22 +19,49 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Get(string jobCategory, string leaveCategory)
+        public HttpResponseMessage Get(string jobCategory="all", string leaveCategory="all")
         {
-            using (ebuilderEntities entities = new ebuilderEntities())
+            try
             {
-                var entity = entities.leave_type.FirstOrDefault(lt => lt.jobCategory == jobCategory && lt.leaveCategory == leaveCategory);
-                if (entity != null)
+                using (ebuilderEntities entities = new ebuilderEntities())
                 {
-                    
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
-                }
-                else
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Leave Type" + leaveCategory + " for"+ jobCategory +"not found");
+                    var parameters = "";
+                    parameters += jobCategory == "all" ? "0" : "1";
+                    parameters += leaveCategory == "all" ? "0" : "1";
+
+                    var entity = new List<leave_type>();
+
+                    switch (parameters)
+                    {
+                        case "00":
+                            entity = entities.leave_type.ToList();
+                            break;
+                        case "01":
+                            entity = entities.leave_type.Where(lt => lt.leaveCategory == leaveCategory).ToList();
+                            break;
+                        case "10":
+                            entity = entities.leave_type.Where(lt => lt.jobCategory == jobCategory).ToList();
+                            break;
+                        case "11":
+                            entity = entities.leave_type.Where(lt => lt.jobCategory == jobCategory && lt.leaveCategory == leaveCategory).ToList();
+                            break;
+                    }
+                    if (entity.Any())
+                    {
+
+                        return Request.CreateResponse(HttpStatusCode.OK, entity);
+                    }
+                    else
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No Leave Types");
+
+                    }
 
                 }
-
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 

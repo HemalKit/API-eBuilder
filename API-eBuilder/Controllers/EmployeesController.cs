@@ -14,14 +14,14 @@ namespace API_eBuilder.Controllers
     public class EmployeesController : ApiController
     {
       
-        public IEnumerable<employee> Get()
+       /* public IEnumerable<employee> Get()
         {
             using(ebuilderEntities entities = new ebuilderEntities())
             {
                 return entities.employees.ToList();
 
             }
-        }
+        }*/
 
         public HttpResponseMessage Get(string id)
         {
@@ -30,6 +30,7 @@ namespace API_eBuilder.Controllers
                 var entity = entities.employees.FirstOrDefault(e => e.EID == id);
                 if(entity != null)
                 {
+                    
                     return Request.CreateResponse(HttpStatusCode.OK, entity);
                 }
                 else
@@ -37,6 +38,42 @@ namespace API_eBuilder.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Employee with the EID " + id + " not Found");
                 }
 
+            }
+        }
+
+        public HttpResponseMessage Get(string gender="all",string jobCategory = "all")
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var parameters = "";
+                    parameters += gender == "all" ? "0" : "1";
+                    parameters += jobCategory == "all" ? "0" : "1";
+
+                    var entity = new List<employee>();
+
+                    switch (parameters)
+                    {
+                        case "00":
+                            entity = entities.employees.ToList();
+                            break;
+                        case "01":
+                            entity = entities.employees.Where(e => e.jobCategory == jobCategory).ToList();
+                            break;
+                        case "10":
+                            entity = entities.employees.Where(e => e.gender == gender).ToList();
+                            break;
+                        case "11":
+                            entity = entities.employees.Where(e => e.gender == gender && e.jobCategory == jobCategory).ToList();
+                            break;
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 

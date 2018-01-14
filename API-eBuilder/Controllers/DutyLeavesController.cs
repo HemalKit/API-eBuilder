@@ -10,14 +10,14 @@ namespace API_eBuilder.Controllers
 {
     public class DutyLeavesController : ApiController
     {
-        public IEnumerable<duty_leave> Get()
+       /* public IEnumerable<duty_leave> Get()
         {
             using (ebuilderEntities entities = new ebuilderEntities())
             {
                 return entities.duty_leave.ToList();
 
             }
-        }
+        }*/
 
         public HttpResponseMessage Get(int id)
         {
@@ -36,21 +36,33 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Get(DateTime date, string EID = "all")
+        public HttpResponseMessage Get(string EID = "all", DateTime? date = null)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
-                    if (EID == "all")
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, entities.duty_leave.Where(dl => dl.date == date).ToList());
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, entities.duty_leave.Where(dl => dl.date == date && dl.EID == EID).ToList());
-                    }
+                    var entity = new List<duty_leave>();
+                    var parameters = "";
+                    parameters += EID == "all" ? "0" : "1";
+                    parameters += date == null ? "0" : "1";
 
+                    switch (parameters)
+                    {
+                        case "00":
+                            entity = entities.duty_leave.ToList();
+                            break;
+                        case "01":
+                            entity = entities.duty_leave.Where(dl => dl.date == date).ToList();
+                            break;
+                        case "10":
+                            entity = entities.duty_leave.Where(dl => dl.EID == EID).ToList();
+                            break;
+                        case "11":
+                            entity = entities.duty_leave.Where(dl => dl.EID == EID && dl.date == date).ToList();
+                            break;
+                    }                    
+                     return Request.CreateResponse(HttpStatusCode.OK, entity);
                 }
             }
             catch (Exception ex)
@@ -64,7 +76,6 @@ namespace API_eBuilder.Controllers
         {
             try
             {
-
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
 

@@ -10,14 +10,14 @@ namespace API_eBuilder.Controllers
 {
     public class AttendanceController : ApiController
     {
-        public IEnumerable<attendance> Get()
+        /*public IEnumerable<attendance> Get()
         {
             using (ebuilderEntities entities = new ebuilderEntities())
             {
                 return entities.attendances.ToList();
 
             }
-        }
+        }*/
 
         public HttpResponseMessage Get(int id)
         {
@@ -38,21 +38,34 @@ namespace API_eBuilder.Controllers
         }
 
 
-        public HttpResponseMessage Get(DateTime date,string EID = "all")
+        public HttpResponseMessage Get(DateTime? date = null, string EID = "all")
         {
             try
             {
                 using(ebuilderEntities entities = new ebuilderEntities())
                 {
-                    if(EID == "all")
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,entities.attendances.Where(a => a.date == date).ToList());
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,entities.attendances.Where(a => a.date == date && a.EID == EID).ToList());
-                    }
+                    string parameters = "";
+                    parameters += date == null ? "0" : "1";
+                    parameters += EID == "all" ? "0" : "1";
 
+                    var entity = new List<attendance>();
+
+                    switch (parameters)
+                    {
+                        case "00":
+                            entity = entities.attendances.ToList();
+                            break;
+                        case "01":
+                            entity = entities.attendances.Where(a => a.EID == EID).ToList();
+                            break;
+                        case "10":
+                            entity = entities.attendances.Where(a => a.date == date).ToList();
+                            break;
+                        case "11":
+                            entity = entities.attendances.Where(a => a.date == date && a.EID == EID).ToList();
+                            break;
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);                   
                 }
             }
             catch(Exception ex)
