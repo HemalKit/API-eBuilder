@@ -11,7 +11,7 @@
           </Key>
           <Property Name="APID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LID" Type="int" Nullable="false" />
-          <Property Name="status" Type="nvarchar" MaxLength="15" />
+          <Property Name="status" Type="nvarchar" MaxLength="15" Nullable="false" />
           <Property Name="ManagerID" Type="nvarchar" MaxLength="10" Nullable="false" />
         </EntityType>
         <EntityType Name="attendance">
@@ -29,8 +29,8 @@
             <PropertyRef Name="CID" />
           </Key>
           <Property Name="CID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="EID" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="phoneNo" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="EID" Type="nvarchar" MaxLength="10" Nullable="false" />
         </EntityType>
         <EntityType Name="duty_leave">
           <Key>
@@ -40,9 +40,9 @@
           <Property Name="date" Type="date" Nullable="false" />
           <Property Name="appointmentTime" Type="time" Precision="7" Nullable="false" />
           <Property Name="duration" Type="time" Precision="7" />
-          <Property Name="location" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="location" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="purpose" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="EID" Type="nvarchar" MaxLength="10" Nullable="false" />
-          <Property Name="purpose" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="employee">
           <Key>
@@ -97,7 +97,7 @@
           <Property Name="NID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
           <Property Name="time" Type="time" Precision="7" Nullable="false" />
-          <Property Name="content" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="content" Type="nvarchar" MaxLength="250" Nullable="false" />
         </EntityType>
         <EntityType Name="sent_to">
           <Key>
@@ -114,8 +114,8 @@
           <Property Name="TID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
           <Property Name="time" Type="time" Precision="7" Nullable="false" />
-          <Property Name="activity" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="status" Type="nvarchar" MaxLength="10" />
+          <Property Name="activity" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="status" Type="nvarchar" MaxLength="12" Nullable="false" />
           <Property Name="EID" Type="nvarchar" MaxLength="10" Nullable="false" />
         </EntityType>
         <EntityType Name="tracking">
@@ -128,8 +128,10 @@
           <Property Name="time" Type="time" Precision="7" Nullable="false" />
           <Property Name="DLID" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK__approval__LID__2739D489">
-          <End Role="leav" Type="Self.leav" Multiplicity="1" />
+        <Association Name="FK__approval__LID__2610A626">
+          <End Role="leav" Type="Self.leav" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="approval" Type="Self.approval" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="leav">
@@ -140,7 +142,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__approval__Manage__29221CFB">
+        <Association Name="FK__approval__Manage__27F8EE98">
           <End Role="employee" Type="Self.employee" Multiplicity="1" />
           <End Role="approval" Type="Self.approval" Multiplicity="*" />
           <ReferentialConstraint>
@@ -152,8 +154,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__attendance__EID__6A30C649">
-          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+        <Association Name="FK__attendance__EID__7B264821">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="attendance" Type="Self.attendance" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -164,8 +168,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__contact__EID__66603565">
-          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+        <Association Name="FK__contact__EID__1B9317B3">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="contact" Type="Self.contact" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -176,8 +182,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__duty_leave__EID__6B24EA82">
-          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+        <Association Name="FK__duty_leave__EID__00DF2177">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="duty_leave" Type="Self.duty_leave" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -188,8 +196,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__leav__EID__236943A5">
-          <End Role="employee" Type="Self.employee" Multiplicity="0..1" />
+        <Association Name="FK__leav__EID__5F7E2DAC">
+          <End Role="employee" Type="Self.employee" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="leav" Type="Self.leav" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -200,8 +210,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__managed_b__Manag__04E4BC85">
-          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+        <Association Name="FK__managed_b__Manag__22401542">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="managed_by" Type="Self.managed_by" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -212,7 +224,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__managed_by__EID__05D8E0BE">
+        <Association Name="FK__managed_by__EID__2334397B">
           <End Role="employee" Type="Self.employee" Multiplicity="1" />
           <End Role="managed_by" Type="Self.managed_by" Multiplicity="*" />
           <ReferentialConstraint>
@@ -224,8 +236,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__sent_to__EID__09A971A2">
-          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+        <Association Name="FK__sent_to__EID__14E61A24">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="sent_to" Type="Self.sent_to" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -236,8 +250,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__sent_to__NID__08B54D69">
-          <End Role="notification" Type="Self.notification" Multiplicity="1" />
+        <Association Name="FK__sent_to__NID__13F1F5EB">
+          <End Role="notification" Type="Self.notification" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="sent_to" Type="Self.sent_to" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="notification">
@@ -248,8 +264,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__task__EID__7E37BEF6">
-          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+        <Association Name="FK__task__EID__18B6AB08">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="task" Type="Self.task" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -260,8 +278,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__tracking__DLID__7F2BE32F">
-          <End Role="duty_leave" Type="Self.duty_leave" Multiplicity="1" />
+        <Association Name="FK__tracking__DLID__03BB8E22">
+          <End Role="duty_leave" Type="Self.duty_leave" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="tracking" Type="Self.tracking" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="duty_leave">
@@ -299,51 +319,51 @@
           <EntitySet Name="sent_to" EntityType="Self.sent_to" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="task" EntityType="Self.task" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tracking" EntityType="Self.tracking" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__approval__LID__2739D489" Association="Self.FK__approval__LID__2739D489">
+          <AssociationSet Name="FK__approval__LID__2610A626" Association="Self.FK__approval__LID__2610A626">
             <End Role="leav" EntitySet="leav" />
             <End Role="approval" EntitySet="approval" />
           </AssociationSet>
-          <AssociationSet Name="FK__approval__Manage__29221CFB" Association="Self.FK__approval__Manage__29221CFB">
+          <AssociationSet Name="FK__approval__Manage__27F8EE98" Association="Self.FK__approval__Manage__27F8EE98">
             <End Role="employee" EntitySet="employee" />
             <End Role="approval" EntitySet="approval" />
           </AssociationSet>
-          <AssociationSet Name="FK__attendance__EID__6A30C649" Association="Self.FK__attendance__EID__6A30C649">
+          <AssociationSet Name="FK__attendance__EID__7B264821" Association="Self.FK__attendance__EID__7B264821">
             <End Role="employee" EntitySet="employee" />
             <End Role="attendance" EntitySet="attendance" />
           </AssociationSet>
-          <AssociationSet Name="FK__contact__EID__66603565" Association="Self.FK__contact__EID__66603565">
+          <AssociationSet Name="FK__contact__EID__1B9317B3" Association="Self.FK__contact__EID__1B9317B3">
             <End Role="employee" EntitySet="employee" />
             <End Role="contact" EntitySet="contact" />
           </AssociationSet>
-          <AssociationSet Name="FK__duty_leave__EID__6B24EA82" Association="Self.FK__duty_leave__EID__6B24EA82">
+          <AssociationSet Name="FK__duty_leave__EID__00DF2177" Association="Self.FK__duty_leave__EID__00DF2177">
             <End Role="employee" EntitySet="employee" />
             <End Role="duty_leave" EntitySet="duty_leave" />
           </AssociationSet>
-          <AssociationSet Name="FK__leav__EID__236943A5" Association="Self.FK__leav__EID__236943A5">
+          <AssociationSet Name="FK__leav__EID__5F7E2DAC" Association="Self.FK__leav__EID__5F7E2DAC">
             <End Role="employee" EntitySet="employee" />
             <End Role="leav" EntitySet="leav" />
           </AssociationSet>
-          <AssociationSet Name="FK__managed_b__Manag__04E4BC85" Association="Self.FK__managed_b__Manag__04E4BC85">
+          <AssociationSet Name="FK__managed_b__Manag__22401542" Association="Self.FK__managed_b__Manag__22401542">
             <End Role="employee" EntitySet="employee" />
             <End Role="managed_by" EntitySet="managed_by" />
           </AssociationSet>
-          <AssociationSet Name="FK__managed_by__EID__05D8E0BE" Association="Self.FK__managed_by__EID__05D8E0BE">
+          <AssociationSet Name="FK__managed_by__EID__2334397B" Association="Self.FK__managed_by__EID__2334397B">
             <End Role="employee" EntitySet="employee" />
             <End Role="managed_by" EntitySet="managed_by" />
           </AssociationSet>
-          <AssociationSet Name="FK__sent_to__EID__09A971A2" Association="Self.FK__sent_to__EID__09A971A2">
+          <AssociationSet Name="FK__sent_to__EID__14E61A24" Association="Self.FK__sent_to__EID__14E61A24">
             <End Role="employee" EntitySet="employee" />
             <End Role="sent_to" EntitySet="sent_to" />
           </AssociationSet>
-          <AssociationSet Name="FK__sent_to__NID__08B54D69" Association="Self.FK__sent_to__NID__08B54D69">
+          <AssociationSet Name="FK__sent_to__NID__13F1F5EB" Association="Self.FK__sent_to__NID__13F1F5EB">
             <End Role="notification" EntitySet="notification" />
             <End Role="sent_to" EntitySet="sent_to" />
           </AssociationSet>
-          <AssociationSet Name="FK__task__EID__7E37BEF6" Association="Self.FK__task__EID__7E37BEF6">
+          <AssociationSet Name="FK__task__EID__18B6AB08" Association="Self.FK__task__EID__18B6AB08">
             <End Role="employee" EntitySet="employee" />
             <End Role="task" EntitySet="task" />
           </AssociationSet>
-          <AssociationSet Name="FK__tracking__DLID__7F2BE32F" Association="Self.FK__tracking__DLID__7F2BE32F">
+          <AssociationSet Name="FK__tracking__DLID__03BB8E22" Association="Self.FK__tracking__DLID__03BB8E22">
             <End Role="duty_leave" EntitySet="duty_leave" />
             <End Role="tracking" EntitySet="tracking" />
           </AssociationSet>
@@ -362,7 +382,7 @@
           </Key>
           <Property Name="APID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LID" Type="Int32" Nullable="false" />
-          <Property Name="status" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ManagerID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="leav" Relationship="Self.FK__approval__LID__6754599E" FromRole="approval" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="employee" Relationship="Self.FK__approval__Manage__693CA210" FromRole="approval" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
@@ -395,9 +415,9 @@
           <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="appointmentTime" Type="Time" Nullable="false" Precision="7" />
           <Property Name="duration" Type="Time" Precision="7" />
-          <Property Name="location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="location" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="EID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="purpose" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="purpose" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="employee" Relationship="Self.FK__duty_leave__EID__6B24EA82" FromRole="duty_leave" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="trackings" Relationship="Self.FK__tracking__DLID__7F2BE32F" FromRole="duty_leave" ToRole="tracking" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
@@ -424,8 +444,8 @@
           <NavigationProperty Name="duty_leave" Relationship="Self.FK__duty_leave__EID__6B24EA82" FromRole="employee" ToRole="duty_leave" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="leavs" Relationship="Self.FK__leav__EID__6D0D32F4" FromRole="employee" ToRole="leav" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="tasks" Relationship="Self.FK__task__EID__7E37BEF6" FromRole="employee" ToRole="task" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
-          <NavigationProperty Name="employee1" Relationship="Self.managed_by" FromRole="employee" ToRole="employee1" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
-          <NavigationProperty Name="employees" Relationship="Self.managed_by" FromRole="employee1" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <NavigationProperty Name="employee1" Relationship="Self.managed_by" FromRole="employee" ToRole="employee1" a:GetterAccess="Public" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Public" />
+          <NavigationProperty Name="employees" Relationship="Self.managed_by" FromRole="employee1" ToRole="employee" a:GetterAccess="Public" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Public" />
           <NavigationProperty Name="notifications" Relationship="Self.sent_to" FromRole="employee" ToRole="notification" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>
         <EntityType Name="leav">
@@ -459,8 +479,8 @@
           <Property Name="NID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="time" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="content" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="employees" Relationship="Self.sent_to" FromRole="notification" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <Property Name="content" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="employees" Relationship="Self.sent_to" FromRole="notification" ToRole="employee" a:GetterAccess="Public" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Public" />
         </EntityType>
         <EntityType Name="task">
           <Key>
@@ -469,8 +489,8 @@
           <Property Name="TID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="time" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="activity" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="status" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="activity" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="status" Type="String" MaxLength="12" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="EID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="employee" Relationship="Self.FK__task__EID__7E37BEF6" FromRole="task" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
         </EntityType>

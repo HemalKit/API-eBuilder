@@ -119,10 +119,31 @@ namespace API_eBuilder.Controllers
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
                     entities.leavs.Add(leave);
-                    entities.SaveChanges();
-                    var message = Request.CreateResponse(HttpStatusCode.OK, leave);
-                    message.Headers.Location = new Uri(Request.RequestUri + leave.LID.ToString());
-                    return message;
+                    
+                    var man = entities.employees.FirstOrDefault(e => e.EID == leave.EID);
+                    // List<employee> man = (List<employee>)entities.Entry(emp).Property("employee").CurrentValue;
+                    entities.Entry(man).Collection("employees").Load();
+                    if (man.employees.Any())
+                    {
+                        foreach (var m in man.employees)
+                        {
+                            approval app = new approval();
+                            app.ManagerID = m.EID;
+                            app.LID = leave.LID;
+                            app.status = "pending";
+                            entities.approvals.Add(app);
+                        }
+                        var message = Request.CreateResponse(HttpStatusCode.OK, leave);
+                        entities.SaveChanges();
+                        message.Headers.Location = new Uri(Request.RequestUri + leave.LID.ToString());
+                        return message;
+                    }
+                    else
+                    {
+                        var message = Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error occured");
+                        return message;
+                    }
+                    
                 }
             }
             catch (Exception ex)

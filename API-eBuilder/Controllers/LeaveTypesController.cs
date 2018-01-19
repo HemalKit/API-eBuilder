@@ -10,14 +10,14 @@ namespace API_eBuilder.Controllers
 {
     public class LeaveTypesController : ApiController
     {
-        public IEnumerable<leave_type> Get()
+        /*public IEnumerable<leave_type> Get()
         {
             using (ebuilderEntities entities = new ebuilderEntities())
             {
                 return entities.leave_type.ToList();
 
             }
-        }
+        }*/
 
         public HttpResponseMessage Get(string jobCategory="all", string leaveCategory="all")
         {
