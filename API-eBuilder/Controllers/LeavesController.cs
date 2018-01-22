@@ -26,7 +26,7 @@ namespace API_eBuilder.Controllers
                 var entity = entities.leavs.FirstOrDefault(l => l.LID == id);
                 if (entity != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { leaves = entity });
                 }
                 else
                 {
@@ -48,10 +48,7 @@ namespace API_eBuilder.Controllers
                     parameters += jobCategory == "all" ? "0" : "1";
                     parameters += EID == "all" ? "0" : "1";
                     
-
                     var entity = new List<leav>() ;
-
-
                     switch (parameters)
                     {
                         case "0000":                         
@@ -108,19 +105,58 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
 
             }
-
-
         }
+
+
+
+        [HttpGet]
+        public HttpResponseMessage Get(string EID, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var entity = entities.leavs.Where(l => l.EID == EID && (DateTime.Compare(startDate, l.date) < 0 && DateTime.Compare(l.date, endDate) < 0)).ToList();
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
 
         public HttpResponseMessage Post([FromBody]leav leave)
         {
             try
             {
+
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    var maxLeaves = entities.leave_type.FirstOrDefault(lt => lt.leaveCategory == leave.leaveCategory && lt.jobCategory == leave.jobCategory).maxAllowed;
+
+                    if (entities.employees.FirstOrDefault(e => e.EID == leave.EID).jobCategory != leave.jobCategory)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Inalid Data");
+                    }
+
+
+                    if (maxLeaves == 0)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Incompatible leave type");
+                    }
+
+                    var leavesTaken = entities.leavs.Where(l => l.EID == leave.EID && l.leaveCategory == leave.leaveCategory && l.date.Year == leave.date.Year).Count();
+                    if (leavesTaken >= maxLeaves)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No leaves available");
+                    }
+
                     entities.leavs.Add(leave);
                     
                     var man = entities.employees.FirstOrDefault(e => e.EID == leave.EID);
+
                     // List<employee> man = (List<employee>)entities.Entry(emp).Property("employee").CurrentValue;
                     entities.Entry(man).Collection("employees").Load();
                     if (man.employees.Any())

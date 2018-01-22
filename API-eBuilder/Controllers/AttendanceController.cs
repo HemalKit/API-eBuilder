@@ -75,14 +75,32 @@ namespace API_eBuilder.Controllers
         } 
 
 
+        [HttpGet]
+        //[Route("api/attendance/{EID}/{*startDate:datetime}/{*endDate:datetime}")]
+        public HttpResponseMessage Get(string EID, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var entity = entities.attendances.Where(a => a.EID == EID && (DateTime.Compare(startDate, a.date) < 0 && DateTime.Compare(a.date, endDate) < 0)).ToList();
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
+
         public HttpResponseMessage Post([FromBody] attendance att)
         {
             try
             {
-
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
-
                     entities.attendances.Add(att);
                     entities.SaveChanges();
                     var message = Request.CreateResponse(HttpStatusCode.OK, att);
@@ -92,7 +110,7 @@ namespace API_eBuilder.Controllers
             }
             catch(Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, att.ToString(),ex);
             }
         }
 

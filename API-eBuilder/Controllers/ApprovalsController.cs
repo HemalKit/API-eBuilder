@@ -35,6 +35,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
+
         public HttpResponseMessage Get(int LID=0 , string ManagerID="all", string status = "all")
         {
             try
@@ -91,7 +92,6 @@ namespace API_eBuilder.Controllers
         {
             try
             {
-
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
 

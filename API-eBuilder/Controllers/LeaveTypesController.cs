@@ -18,8 +18,8 @@ namespace API_eBuilder.Controllers
 
             }
         }*/
-
-        public HttpResponseMessage Get(string jobCategory="all", string leaveCategory="all")
+        
+        public HttpResponseMessage Get([FromUri]string jobCategory = "all", [FromUri] string leaveCategory="all")
         {
             try
             {
@@ -49,7 +49,7 @@ namespace API_eBuilder.Controllers
                     if (entity.Any())
                     {
 
-                        return Request.CreateResponse(HttpStatusCode.OK, entity);
+                        return Request.CreateResponse(HttpStatusCode.OK, entity );
                     }
                     else
                     {

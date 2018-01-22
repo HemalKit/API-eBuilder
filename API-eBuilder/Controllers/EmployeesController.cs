@@ -40,7 +40,7 @@ namespace API_eBuilder.Controllers
 
             }
         }
-
+        //[Route("api/employees/jobcategory/{jobcategory:alpha?}/{gender:alpha?}")]
         public HttpResponseMessage Get(string gender="all",string jobCategory = "all")
         {
             try

@@ -185,6 +185,7 @@
     <Compile Include="Controllers\AccessController.cs" />
     <Compile Include="Controllers\ApprovalsController.cs" />
     <Compile Include="Controllers\AttendanceController.cs" />
+    <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\DutyLeavesController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
