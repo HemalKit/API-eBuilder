@@ -23,10 +23,10 @@ namespace DataAccess
         public int DLID { get; set; }
         public System.DateTime date { get; set; }
         public System.TimeSpan appointmentTime { get; set; }
-        public Nullable<System.TimeSpan> duration { get; set; }
         public string location { get; set; }
         public string EID { get; set; }
         public string purpose { get; set; }
+        public System.TimeSpan endTime { get; set; }
     
         internal virtual employee employee { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

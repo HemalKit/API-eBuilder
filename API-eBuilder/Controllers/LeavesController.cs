@@ -103,12 +103,12 @@ namespace API_eBuilder.Controllers
             catch(Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-
             }
         }
 
 
 
+        //Get accepted leaves for a given EID within a given range
         [HttpGet]
         public HttpResponseMessage Get(string EID, DateTime startDate, DateTime endDate)
         {
@@ -116,8 +116,45 @@ namespace API_eBuilder.Controllers
             {
                 using(ebuilderEntities entities = new ebuilderEntities())
                 {
-                    var entity = entities.leavs.Where(l => l.EID == EID && (DateTime.Compare(startDate, l.date) < 0 && DateTime.Compare(l.date, endDate) < 0)).ToList();
+                    var allLeaves = entities.leavs.Where(l => l.EID == EID && (DateTime.Compare(startDate, l.date) < 0 && DateTime.Compare(l.date, endDate) < 0)).ToList();
+                    var entity = new List<leav>();
+                    foreach( leav l in allLeaves)
+                    {
+                        foreach(approval app in entities.approvals.Where(a => a.LID == l.LID).ToList())
+                        {
+                            if(app.status == "accepted")
+                            {
+                                entity.Add(l); //select only the accepted leaves
+                            }
+                        }                        
+                    }
                     return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Leaves/GetAvailable/{EID}")]
+        public HttpResponseMessage GetLeaves(string EID)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var jCategory = entities.employees.FirstOrDefault(e => e.EID == EID).jobCategory;
+                    var allLeavesTypes = entities.leave_type.Where(lt => lt.jobCategory == jCategory).ToList();
+
+                    foreach(var lt in allLeavesTypes)
+                    {
+                        var leavesTakenCount = entities.leavs.Where(l => l.EID == EID && l.leaveCategory == lt.leaveCategory && l.date.Year == DateTime.Now.Year).Count();
+                        lt.maxAllowed = lt.maxAllowed - leavesTakenCount;
+                    }
+
+                    return Request.CreateResponse(HttpStatusCode.OK, allLeavesTypes);
                 }
             }
             catch(Exception ex)
@@ -131,17 +168,13 @@ namespace API_eBuilder.Controllers
         {
             try
             {
-
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    //check whether the maximum allowed leaves for the period has been taken
+
+                    leave.jobCategory = entities.employees.FirstOrDefault(e => e.EID == leave.EID).jobCategory;
                     var maxLeaves = entities.leave_type.FirstOrDefault(lt => lt.leaveCategory == leave.leaveCategory && lt.jobCategory == leave.jobCategory).maxAllowed;
-
-                    if (entities.employees.FirstOrDefault(e => e.EID == leave.EID).jobCategory != leave.jobCategory)
-                    {
-                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Inalid Data");
-                    }
-
-
+                    
                     if (maxLeaves == 0)
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Incompatible leave type");
@@ -152,6 +185,8 @@ namespace API_eBuilder.Controllers
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No leaves available");
                     }
+
+
 
                     entities.leavs.Add(leave);
                     
@@ -178,8 +213,7 @@ namespace API_eBuilder.Controllers
                     {
                         var message = Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error occured");
                         return message;
-                    }
-                    
+                    }                    
                 }
             }
             catch (Exception ex)
@@ -187,7 +221,6 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
 
         public HttpResponseMessage Delete(int id)
         {
@@ -242,7 +275,5 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
-
     }
 }

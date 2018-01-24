@@ -39,10 +39,10 @@
           <Property Name="DLID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="date" Nullable="false" />
           <Property Name="appointmentTime" Type="time" Precision="7" Nullable="false" />
-          <Property Name="duration" Type="time" Precision="7" />
           <Property Name="location" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="purpose" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="EID" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="endTime" Type="time" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="employee">
           <Key>
@@ -128,10 +128,8 @@
           <Property Name="time" Type="time" Precision="7" Nullable="false" />
           <Property Name="DLID" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK__approval__LID__2610A626">
-          <End Role="leav" Type="Self.leav" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+        <Association Name="FK__approval__LID__4865BE2A">
+          <End Role="leav" Type="Self.leav" Multiplicity="1" />
           <End Role="approval" Type="Self.approval" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="leav">
@@ -142,8 +140,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__approval__Manage__27F8EE98">
-          <End Role="employee" Type="Self.employee" Multiplicity="1" />
+        <Association Name="FK__approval__Manage__4A4E069C">
+          <End Role="employee" Type="Self.employee" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="approval" Type="Self.approval" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employee">
@@ -210,7 +210,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__managed_b__Manag__22401542">
+        <Association Name="FK__managed_b__Manag__2EA5EC27">
           <End Role="employee" Type="Self.employee" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -224,7 +224,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__managed_by__EID__2334397B">
+        <Association Name="FK__managed_by__EID__2F9A1060">
           <End Role="employee" Type="Self.employee" Multiplicity="1" />
           <End Role="managed_by" Type="Self.managed_by" Multiplicity="*" />
           <ReferentialConstraint>
@@ -319,11 +319,11 @@
           <EntitySet Name="sent_to" EntityType="Self.sent_to" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="task" EntityType="Self.task" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tracking" EntityType="Self.tracking" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__approval__LID__2610A626" Association="Self.FK__approval__LID__2610A626">
+          <AssociationSet Name="FK__approval__LID__4865BE2A" Association="Self.FK__approval__LID__4865BE2A">
             <End Role="leav" EntitySet="leav" />
             <End Role="approval" EntitySet="approval" />
           </AssociationSet>
-          <AssociationSet Name="FK__approval__Manage__27F8EE98" Association="Self.FK__approval__Manage__27F8EE98">
+          <AssociationSet Name="FK__approval__Manage__4A4E069C" Association="Self.FK__approval__Manage__4A4E069C">
             <End Role="employee" EntitySet="employee" />
             <End Role="approval" EntitySet="approval" />
           </AssociationSet>
@@ -343,11 +343,11 @@
             <End Role="employee" EntitySet="employee" />
             <End Role="leav" EntitySet="leav" />
           </AssociationSet>
-          <AssociationSet Name="FK__managed_b__Manag__22401542" Association="Self.FK__managed_b__Manag__22401542">
+          <AssociationSet Name="FK__managed_b__Manag__2EA5EC27" Association="Self.FK__managed_b__Manag__2EA5EC27">
             <End Role="employee" EntitySet="employee" />
             <End Role="managed_by" EntitySet="managed_by" />
           </AssociationSet>
-          <AssociationSet Name="FK__managed_by__EID__2334397B" Association="Self.FK__managed_by__EID__2334397B">
+          <AssociationSet Name="FK__managed_by__EID__2F9A1060" Association="Self.FK__managed_by__EID__2F9A1060">
             <End Role="employee" EntitySet="employee" />
             <End Role="managed_by" EntitySet="managed_by" />
           </AssociationSet>
@@ -414,12 +414,12 @@
           <Property Name="DLID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="appointmentTime" Type="Time" Nullable="false" Precision="7" />
-          <Property Name="duration" Type="Time" Precision="7" />
           <Property Name="location" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="EID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="purpose" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="employee" Relationship="Self.FK__duty_leave__EID__6B24EA82" FromRole="duty_leave" ToRole="employee" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
           <NavigationProperty Name="trackings" Relationship="Self.FK__tracking__DLID__7F2BE32F" FromRole="duty_leave" ToRole="tracking" a:GetterAccess="Internal" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Internal" />
+          <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
         </EntityType>
         <EntityType Name="employee">
           <Key>
@@ -718,10 +718,10 @@
           <EntitySetMapping Name="duty_leave">
             <EntityTypeMapping TypeName="ebuilderModel.duty_leave">
               <MappingFragment StoreEntitySet="duty_leave">
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
                 <ScalarProperty Name="DLID" ColumnName="DLID" />
                 <ScalarProperty Name="date" ColumnName="date" />
                 <ScalarProperty Name="appointmentTime" ColumnName="appointmentTime" />
-                <ScalarProperty Name="duration" ColumnName="duration" />
                 <ScalarProperty Name="location" ColumnName="location" />
                 <ScalarProperty Name="EID" ColumnName="EID" />
                 <ScalarProperty Name="purpose" ColumnName="purpose" />

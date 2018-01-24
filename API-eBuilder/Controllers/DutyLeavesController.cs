@@ -26,7 +26,7 @@ namespace API_eBuilder.Controllers
                 var entity = entities.duty_leave.FirstOrDefault(dl => dl.DLID == id);
                 if (entity != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { dutyLeaves = entity });
+                    return Request.CreateResponse(HttpStatusCode.OK, entity );
                 }
                 else
                 {
@@ -62,7 +62,7 @@ namespace API_eBuilder.Controllers
                             entity = entities.duty_leave.Where(dl => dl.EID == EID && dl.date == date).ToList();
                             break;
                     }                    
-                     return Request.CreateResponse(HttpStatusCode.OK, new { dutyLeaves = entity });
+                     return Request.CreateResponse(HttpStatusCode.OK,  entity );
                 }
             }
             catch (Exception ex)
@@ -136,7 +136,7 @@ namespace API_eBuilder.Controllers
                     {
                         entity.date = dutyLeave.date;
                         entity.appointmentTime = dutyLeave.appointmentTime;
-                        entity.duration = dutyLeave.duration;
+                        entity.endTime = dutyLeave.endTime;
                        
                         entities.SaveChanges();
                         return Request.CreateResponse(HttpStatusCode.OK, entity);
