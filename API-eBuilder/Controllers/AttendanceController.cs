@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using API_eBuilder.Models;
 
 namespace API_eBuilder.Controllers
 {
@@ -26,7 +27,15 @@ namespace API_eBuilder.Controllers
                 var entity = entities.attendances.FirstOrDefault(a => a.AID == id);
                 if(entity != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                    attendanceWithWorkingHours att = new attendanceWithWorkingHours();
+                    att.AID = entity.AID;
+                    att.checkIn = entity.checkIn;
+                    att.checkOut = entity.checkOut;
+                    att.date = entity.date;
+                    att.EID = entity.EID;
+                    att.workingHours = GetWorkingHours(entity);
+
+                    return Request.CreateResponse(HttpStatusCode.OK, att);
                 }
                 else
                 {
@@ -36,7 +45,6 @@ namespace API_eBuilder.Controllers
 
             }
         }
-
 
         public HttpResponseMessage Get(DateTime? date = null, string EID = "all")
         {
@@ -65,7 +73,21 @@ namespace API_eBuilder.Controllers
                             entity = entities.attendances.Where(a => a.date == date && a.EID == EID).ToList();
                             break;
                     }
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);                   
+
+                    List<attendanceWithWorkingHours> attList = new List<attendanceWithWorkingHours>();
+
+                    foreach(var a in entity)
+                    {
+                        attendanceWithWorkingHours att = new attendanceWithWorkingHours();
+                        att.AID = a.AID;
+                        att.checkIn = a.checkIn;
+                        att.checkOut = a.checkOut;
+                        att.date = a.date;
+                        att.EID = a.EID;
+                        att.workingHours = GetWorkingHours(a);
+                        attList.Add(att);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, attList);                   
                 }
             }
             catch(Exception ex)
@@ -73,7 +95,6 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         } 
-
 
         [HttpGet]
         //[Route("api/attendance/{EID}/{*startDate:datetime}/{*endDate:datetime}")]
@@ -84,7 +105,22 @@ namespace API_eBuilder.Controllers
                 using(ebuilderEntities entities = new ebuilderEntities())
                 {
                     var entity = entities.attendances.Where(a => a.EID == EID && (DateTime.Compare(startDate, a.date) < 0 && DateTime.Compare(a.date, endDate) < 0)).ToList();
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+
+                    List<attendanceWithWorkingHours> attList = new List<attendanceWithWorkingHours>();
+
+                    foreach (var a in entity)
+                    {
+                        attendanceWithWorkingHours att = new attendanceWithWorkingHours();
+                        att.AID = a.AID;
+                        att.checkIn = a.checkIn;
+                        att.checkOut = a.checkOut;
+                        att.date = a.date;
+                        att.EID = a.EID;
+                        att.workingHours = GetWorkingHours(a);
+                        attList.Add(att);
+                    }
+
+                    return Request.CreateResponse(HttpStatusCode.OK, attList);
                 }
             }
             catch(Exception ex)
@@ -92,7 +128,6 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
 
 
         public HttpResponseMessage Post([FromBody] attendance att)
@@ -141,6 +176,15 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        //Calculate working hours
+        [NonAction]
+        public static TimeSpan GetWorkingHours(attendance att)
+        {
+            TimeSpan checkIn = (TimeSpan)att.checkIn;
+            TimeSpan checkOut = (TimeSpan)att.checkOut;
+            var workingHours = checkOut.Subtract(checkIn);
+            return workingHours;
+        }
 
     }
 }

@@ -185,7 +185,7 @@ namespace API_eBuilder.Controllers
                         entity.password = Crypto.Hash(credential.newPassword);
 
                         entities.SaveChanges();
-                        return Request.CreateResponse(HttpStatusCode.OK, entity);
+                        return Request.CreateResponse(HttpStatusCode.OK, "Change Success");
                     }
                     else
                     {
@@ -261,7 +261,7 @@ namespace API_eBuilder.Controllers
                     {
                         entity.password = Crypto.Hash(credential.newPassword);
                         entities.SaveChanges();
-                        return Request.CreateResponse(HttpStatusCode.OK, entity);
+                        return Request.CreateResponse(HttpStatusCode.OK, "Reset Success");
                     }
                     else
                     {

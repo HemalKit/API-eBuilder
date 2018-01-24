@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using API_eBuilder.Models;
 
 namespace API_eBuilder.Controllers
 {
@@ -42,15 +43,23 @@ namespace API_eBuilder.Controllers
         }
 
 
-        public HttpResponseMessage Post([FromBody] tracking tr)
+        public HttpResponseMessage Post([FromBody]trackingWithEID tr)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
-                    entities.trackings.Add(tr);
+                    var DLID = entities.duty_leave.FirstOrDefault(dl => dl.EID == tr.EID && dl.date.Year == DateTime.Now.Year
+                     && dl.date.Month == DateTime.Now.Month && dl.date.Day == DateTime.Now.Day).DLID;
+                    tracking newTracking = new tracking();
+                    newTracking.DLID = DLID;
+                    newTracking.latitude = tr.latitude;
+                    newTracking.longitude = tr.longitude;
+                    newTracking.time = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+                    entities.trackings.Add(newTracking);
                     entities.SaveChanges();
-                    var message = Request.CreateResponse(HttpStatusCode.OK, tr);
+                    var message = Request.CreateResponse(HttpStatusCode.OK, newTracking);
                     message.Headers.Location = new Uri(Request.RequestUri + tr.TRID.ToString());
                     return message;
                 }
