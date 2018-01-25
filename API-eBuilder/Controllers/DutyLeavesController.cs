@@ -20,6 +20,8 @@ namespace API_eBuilder.Controllers
             }
         }*/
 
+
+        //Get the duty leave by providing DLID
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -50,7 +52,9 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Get(string EID = "all", DateTime? date = null)
+
+        //Get the list of duty leaves of an employees or all employees within a time range. All parameters are optional
+        public HttpResponseMessage Get(string EID = "all", DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -59,21 +63,34 @@ namespace API_eBuilder.Controllers
                     var entity = new List<duty_leave>();
                     var parameters = "";
                     parameters += EID == "all" ? "0" : "1";
-                    parameters += date == null ? "0" : "1";
+                    parameters += startDate == null ? "0" : "1";
+                    parameters += endDate == null ? "0" : "1";
 
                     switch (parameters)
                     {
-                        case "00":
+                        case "000":
                             entity = entities.duty_leave.ToList();
                             break;
-                        case "01":
-                            entity = entities.duty_leave.Where(dl => dl.date == date).ToList();
+                        case "001":
+                            entity = entities.duty_leave.Where(dl => DateTime.Compare(dl.date,(DateTime)endDate)<0).ToList();
                             break;
-                        case "10":
+                        case "010":
+                            entity = entities.duty_leave.Where(dl => DateTime.Compare((DateTime)startDate,dl.date)<0).ToList();
+                            break;
+                        case "011":
+                            entity = entities.duty_leave.Where(dl => DateTime.Compare(dl.date, (DateTime)endDate) < 0 && DateTime.Compare((DateTime)startDate, dl.date) < 0).ToList();
+                            break;
+                        case "100":
                             entity = entities.duty_leave.Where(dl => dl.EID == EID).ToList();
                             break;
-                        case "11":
-                            entity = entities.duty_leave.Where(dl => dl.EID == EID && dl.date == date).ToList();
+                        case "101":
+                            entity = entities.duty_leave.Where(dl => dl.EID == EID && DateTime.Compare(dl.date, (DateTime)endDate) < 0).ToList();
+                            break;
+                        case "110":
+                            entity = entities.duty_leave.Where(dl => dl.EID == EID && DateTime.Compare((DateTime)startDate, dl.date) < 0).ToList();
+                            break;
+                        case "111":
+                            entity = entities.duty_leave.Where(dl => dl.EID == EID && DateTime.Compare(dl.date, (DateTime)endDate) < 0 && DateTime.Compare((DateTime)startDate, dl.date) < 0).ToList();
                             break;
                     }
 
@@ -124,6 +141,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
+
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -150,6 +168,7 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
+
 
         public HttpResponseMessage Put(int id, [FromBody]duty_leave dutyLeave)
         {

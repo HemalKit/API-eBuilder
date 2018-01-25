@@ -36,7 +36,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Get(DateTime? date = null, string leaveCategory="all", string jobCategory ="all", string EID = "all")
+       /* public HttpResponseMessage Get(DateTime? date = null, string leaveCategory="all", string jobCategory ="all", string EID = "all")
         {
             try
             {
@@ -104,7 +104,7 @@ namespace API_eBuilder.Controllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
-        }
+        }  */
 
 
 
