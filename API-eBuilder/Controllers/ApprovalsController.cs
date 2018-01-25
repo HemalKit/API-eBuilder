@@ -124,7 +124,6 @@ namespace API_eBuilder.Controllers
                     else
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No Approval with the APID " + id.ToString() + " to delete");
-
                     }
 
                 }

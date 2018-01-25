@@ -121,13 +121,88 @@ namespace API_eBuilder.Controllers
         }
 
 
+        //Get the list of duty leaves of employees managed by a manager when EID of manager is given. Range is optional
+        [Route("api/DutyLeaves/GetManaged")]
+        public HttpResponseMessage GetManaged(string EID, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var entity = new List<duty_leave>();
+                    var parameters = "";
+                    parameters += startDate == null ? "0" : "1";
+                    parameters += endDate == null ? "0" : "1";
+
+                    //Get the manager for the given EID
+                    var manager = entities.employees.FirstOrDefault(e => e.EID == EID);
+
+                    if(manager == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No employee available for the given EID");
+                    }
+
+                    //Get the list of employees managed by the manager
+                    entities.Entry(manager).Collection("employee1").Load();
+
+                    foreach(var e in manager.employee1)
+                    {
+                        switch (parameters)
+                        {
+                            case "00":
+                                entities.duty_leave.Where(dl => dl.EID == e.EID).ToList().ForEach( dulv=> entity.Add(dulv));
+                                break;
+                            case "01":
+                                entities.duty_leave.Where(dl => dl.EID == e.EID && DateTime.Compare(dl.date, (DateTime)endDate) < 0).ToList().ForEach(dulv=>entity.Add(dulv));
+                                break;
+                            case "10":
+                                entities.duty_leave.Where(dl => dl.EID == e.EID && DateTime.Compare((DateTime)startDate, dl.date) < 0).ToList().ForEach(dulv => entity.Add(dulv));
+                                break;
+                            case "11":
+                                entities.duty_leave.Where(dl => dl.EID == e.EID && DateTime.Compare((DateTime)startDate, dl.date) < 0 && DateTime.Compare(dl.date, (DateTime)endDate) < 0).ToList().ForEach(dulv => entity.Add(dulv));
+                                break;
+                        }
+                    }
+                    List<dutyLeaveWithName> dlNameList = new List<dutyLeaveWithName>();
+                    foreach (var e in entity)
+                    {
+                        dutyLeaveWithName dlName = new dutyLeaveWithName();
+                        dlName.DLID = e.DLID;
+                        dlName.EID = e.EID;
+                        dlName.date = e.date;
+                        dlName.appointmentTime = e.appointmentTime;
+                        dlName.endTime = e.endTime;
+                        dlName.location = e.location;
+                        dlName.purpose = e.purpose;
+
+                        employee emp = entities.employees.FirstOrDefault(em => em.EID == e.EID);
+                        dlName.fName = emp.fName;
+                        dlName.lName = emp.lName;
+                        dlNameList.Add(dlName);
+                    }
+
+                    return Request.CreateResponse(HttpStatusCode.OK, dlNameList);
+
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
+
         public HttpResponseMessage Post([FromBody] duty_leave dutyLeave)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
-
+                    if (DateTime.Compare(dutyLeave.date,DateTime.Today)<0)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid date");
+                    }
                     entities.duty_leave.Add(dutyLeave);
                     entities.SaveChanges();
                     var message = Request.CreateResponse(HttpStatusCode.OK, dutyLeave);
