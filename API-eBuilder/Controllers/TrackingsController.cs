@@ -55,7 +55,8 @@ namespace API_eBuilder.Controllers
                     newTracking.DLID = DLID;
                     newTracking.latitude = tr.latitude;
                     newTracking.longitude = tr.longitude;
-                    newTracking.time = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+                    newTracking.time = new TimeSpan(DateTime.Now.Hour+5, DateTime.Now.Minute+30, DateTime.Now.Second);
+
 
                     entities.trackings.Add(newTracking);
                     entities.SaveChanges();

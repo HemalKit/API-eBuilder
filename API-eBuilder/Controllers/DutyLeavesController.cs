@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using API_eBuilder.Models;
 
 namespace API_eBuilder.Controllers
 {
@@ -26,7 +27,20 @@ namespace API_eBuilder.Controllers
                 var entity = entities.duty_leave.FirstOrDefault(dl => dl.DLID == id);
                 if (entity != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, entity );
+                    dutyLeaveWithName dlName = new dutyLeaveWithName();
+                    dlName.DLID = entity.DLID;
+                    dlName.EID = entity.EID;
+                    dlName.date = entity.date;
+                    dlName.appointmentTime = entity.appointmentTime;
+                    dlName.endTime = entity.endTime;
+                    dlName.location = entity.location;
+                    dlName.purpose = entity.purpose;
+
+                    employee emp = entities.employees.FirstOrDefault(e => e.EID == entity.EID);
+                    dlName.fName = emp.fName;
+                    dlName.lName = emp.lName;
+
+                    return Request.CreateResponse(HttpStatusCode.OK, dlName );
                 }
                 else
                 {
@@ -61,8 +75,26 @@ namespace API_eBuilder.Controllers
                         case "11":
                             entity = entities.duty_leave.Where(dl => dl.EID == EID && dl.date == date).ToList();
                             break;
-                    }                    
-                     return Request.CreateResponse(HttpStatusCode.OK,  entity );
+                    }
+
+                    List<dutyLeaveWithName> dlNameList = new List<dutyLeaveWithName>();
+                    foreach(var e in entity)
+                    {
+                        dutyLeaveWithName dlName = new dutyLeaveWithName();
+                        dlName.DLID = e.DLID;
+                        dlName.EID = e.EID;
+                        dlName.date = e.date;
+                        dlName.appointmentTime = e.appointmentTime;
+                        dlName.endTime = e.endTime;
+                        dlName.location = e.location;
+                        dlName.purpose = e.purpose;
+
+                        employee emp = entities.employees.FirstOrDefault(em => em.EID == e.EID);
+                        dlName.fName = emp.fName;
+                        dlName.lName = emp.lName;
+                        dlNameList.Add(dlName);
+                    }
+                     return Request.CreateResponse(HttpStatusCode.OK,  dlNameList );
                 }
             }
             catch (Exception ex)
