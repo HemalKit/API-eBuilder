@@ -12,7 +12,11 @@ namespace API_eBuilder.Controllers
     public class AttendanceController : ApiController
     {
 
-        //Get Attendance by AID
+        /// <summary>
+        /// Get Attendance by AID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -20,12 +24,7 @@ namespace API_eBuilder.Controllers
                 var entity = entities.attendances.FirstOrDefault(a => a.AID == id);
                 if(entity != null)
                 {
-                    attendanceWithWorkingHours att = new attendanceWithWorkingHours();
-                    att.AID = entity.AID;
-                    att.checkIn = entity.checkIn;
-                    att.checkOut = entity.checkOut;
-                    att.date = entity.date;
-                    att.EID = entity.EID;
+                    attendanceWithWorkingHours att = new attendanceWithWorkingHours(entity);                    
                     att.workingHours = GetWorkingHours(entity);
 
                     return Request.CreateResponse(HttpStatusCode.OK, att);
@@ -39,7 +38,13 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Get the attendance by date or EID, all parameters are optional
+
+        /// <summary>
+        /// Get the attendance by date or EID, all parameters are optional
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="EID"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(DateTime? date = null, string EID = "all")
         {
             try
@@ -72,12 +77,7 @@ namespace API_eBuilder.Controllers
 
                     foreach(var a in entity)
                     {
-                        attendanceWithWorkingHours att = new attendanceWithWorkingHours();
-                        att.AID = a.AID;
-                        att.checkIn = a.checkIn;
-                        att.checkOut = a.checkOut;
-                        att.date = a.date;
-                        att.EID = a.EID;
+                        attendanceWithWorkingHours att = new attendanceWithWorkingHours(a);
                         att.workingHours = GetWorkingHours(a);
                         attList.Add(att);
                     }
@@ -88,10 +88,16 @@ namespace API_eBuilder.Controllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
-        } 
+        }
 
 
-        //Get the attendance of an EID within a given range
+        /// <summary>
+        ///  Get the attendance of an EID within a given range
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         [HttpGet]
         public HttpResponseMessage Get(string EID, DateTime startDate, DateTime endDate)
         {
@@ -105,12 +111,7 @@ namespace API_eBuilder.Controllers
 
                     foreach (var a in entity)
                     {
-                        attendanceWithWorkingHours att = new attendanceWithWorkingHours();
-                        att.AID = a.AID;
-                        att.checkIn = a.checkIn;
-                        att.checkOut = a.checkOut;
-                        att.date = a.date;
-                        att.EID = a.EID;
+                        attendanceWithWorkingHours att = new attendanceWithWorkingHours(a);                        
                         att.workingHours = GetWorkingHours(a);
                         attList.Add(att);
                     }
@@ -124,7 +125,56 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Add an attendance to the database
+
+        /// <summary>
+        /// Get the list of attendance of managed employees within a given range by providing EID of the manager as ManagerID
+        /// </summary>
+        /// <param name="ManagerID"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Attendance/GetManaged")]
+        public HttpResponseMessage GetManaged(string ManagerID, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var manager = entities.employees.FirstOrDefault(e => e.EID == ManagerID);
+                    if (manager == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No manager exists with the given EID");
+                    }
+
+                    entities.Entry(manager).Collection("employee1").Load();
+
+                    var entity = new List<attendanceWithWorkingHours>();
+
+                    foreach(var emp in manager.employee1)
+                    {
+                        var attList = entities.attendances.Where(a => a.EID == emp.EID && (DateTime.Compare(startDate, a.date) < 0 && DateTime.Compare(a.date, endDate) < 0)).ToList();
+                        foreach( var a in attList)
+                        {
+                            var attWithWH = new attendanceWithWorkingHours(a);
+                            attWithWH.workingHours = GetWorkingHours(a);
+                            entity.Add(attWithWH);
+                        }                        
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        /// <summary>
+        /// Add an attendance to the database
+        /// </summary>
+        /// <param name="att"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post([FromBody] attendance att)
         {
             try
@@ -154,7 +204,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Delete an attendance
+        /// <summary>
+        /// Delete an attendance
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -182,7 +236,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Calculate working hours
+        /// <summary>
+        /// Calculate working hours
+        /// </summary>
+        /// <param name="att"></param>
+        /// <returns></returns>
         [NonAction]
         public static TimeSpan GetWorkingHours(attendance att)
         {

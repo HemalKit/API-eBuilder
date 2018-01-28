@@ -11,7 +11,11 @@ namespace API_eBuilder.Controllers
 {
     public class LeavesController : ApiController
     {
-        //Get the leave by providing LID
+        /// <summary>
+        /// Get the leave by providing LID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -29,78 +33,83 @@ namespace API_eBuilder.Controllers
             }
         }
 
-       /* public HttpResponseMessage Get(DateTime? date = null, string leaveCategory="all", string jobCategory ="all", string EID = "all")
-        {
-            try
-            {
-                using (ebuilderEntities entities = new ebuilderEntities())
-                {
-                    string parameters = "";
-                    parameters += date == null ? "0" : "1";
-                    parameters += leaveCategory == "all" ? "0" : "1";
-                    parameters += jobCategory == "all" ? "0" : "1";
-                    parameters += EID == "all" ? "0" : "1";
-                    
-                    var entity = new List<leav>() ;
-                    switch (parameters)
-                    {
-                        case "0000":                         
-                             entity = entities.leavs.ToList();
-                             break;                            
-                        case "0001":
-                            entity = entities.leavs.Where(l => l.EID == EID).ToList();
-                            break;
-                        case "0010":                       
-                            entity = entities.leavs.Where(l => l.jobCategory == jobCategory).ToList();
-                            break;
-                        case "0011":                       
-                            entity = entities.leavs.Where(l => l.jobCategory == jobCategory && l.EID == EID).ToList();
-                            break;
-                        case "0100":                                             
-                            entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory).ToList();
-                            break;
-                        case "0101":                                                
-                            entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.EID == EID).ToList();
-                            break;
-                        case "0110":
-                            entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.jobCategory == jobCategory).ToList();
-                            break;
-                        case "0111":
-                            entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.jobCategory == jobCategory && l.EID == EID).ToList();
-                            break;
-                        case "1000":
-                            entity = entities.leavs.Where(l => l.date == date).ToList();
-                            break;
-                        case "1001":
-                            entity = entities.leavs.Where(l => l.date == date && l.EID == EID).ToList();
-                            break;
-                        case "1010":
-                            entity = entities.leavs.Where(l =>  l.date == date && l.jobCategory == jobCategory).ToList();
-                            break;
-                        case "1011":
-                            entity = entities.leavs.Where(l => l.date == date && l.jobCategory == jobCategory && l.EID == EID).ToList();
-                            break;
-                        case "1100":
-                            entity = entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory).ToList();
-                            break;
-                        case "1101":
-                            entity = entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory && l.EID == EID).ToList();
-                            break;
-                        case "1111":
-                            entity = entities.leavs.Where(l =>l.date == date && l.leaveCategory == leaveCategory && l.jobCategory == jobCategory && l.EID == EID).ToList();
-                            break;
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
-                }
-            }
-            catch(Exception ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-            }
-        }  */
+        /* public HttpResponseMessage Get(DateTime? date = null, string leaveCategory="all", string jobCategory ="all", string EID = "all")
+         {
+             try
+             {
+                 using (ebuilderEntities entities = new ebuilderEntities())
+                 {
+                     string parameters = "";
+                     parameters += date == null ? "0" : "1";
+                     parameters += leaveCategory == "all" ? "0" : "1";
+                     parameters += jobCategory == "all" ? "0" : "1";
+                     parameters += EID == "all" ? "0" : "1";
 
+                     var entity = new List<leav>() ;
+                     switch (parameters)
+                     {
+                         case "0000":                         
+                              entity = entities.leavs.ToList();
+                              break;                            
+                         case "0001":
+                             entity = entities.leavs.Where(l => l.EID == EID).ToList();
+                             break;
+                         case "0010":                       
+                             entity = entities.leavs.Where(l => l.jobCategory == jobCategory).ToList();
+                             break;
+                         case "0011":                       
+                             entity = entities.leavs.Where(l => l.jobCategory == jobCategory && l.EID == EID).ToList();
+                             break;
+                         case "0100":                                             
+                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory).ToList();
+                             break;
+                         case "0101":                                                
+                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.EID == EID).ToList();
+                             break;
+                         case "0110":
+                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.jobCategory == jobCategory).ToList();
+                             break;
+                         case "0111":
+                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.jobCategory == jobCategory && l.EID == EID).ToList();
+                             break;
+                         case "1000":
+                             entity = entities.leavs.Where(l => l.date == date).ToList();
+                             break;
+                         case "1001":
+                             entity = entities.leavs.Where(l => l.date == date && l.EID == EID).ToList();
+                             break;
+                         case "1010":
+                             entity = entities.leavs.Where(l =>  l.date == date && l.jobCategory == jobCategory).ToList();
+                             break;
+                         case "1011":
+                             entity = entities.leavs.Where(l => l.date == date && l.jobCategory == jobCategory && l.EID == EID).ToList();
+                             break;
+                         case "1100":
+                             entity = entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory).ToList();
+                             break;
+                         case "1101":
+                             entity = entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory && l.EID == EID).ToList();
+                             break;
+                         case "1111":
+                             entity = entities.leavs.Where(l =>l.date == date && l.leaveCategory == leaveCategory && l.jobCategory == jobCategory && l.EID == EID).ToList();
+                             break;
+                     }
+                     return Request.CreateResponse(HttpStatusCode.OK, entity);
+                 }
+             }
+             catch(Exception ex)
+             {
+                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+             }
+         }  */
 
-        //Get list of accepted leaves for a given EID within a given range
+        /// <summary>
+        /// Get list of accepted leaves for a given EID within a given range
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         [HttpGet]
         public HttpResponseMessage Get(string EID, DateTime startDate, DateTime endDate)
         {
@@ -131,7 +140,11 @@ namespace API_eBuilder.Controllers
         }
 
 
-        //Get the available leaves left for the relevant time
+        /// <summary>
+        /// Get the available leaves left for the relevant time
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/Leaves/GetAvailable")]
         public HttpResponseMessage GetLeaves(string EID)
@@ -159,7 +172,11 @@ namespace API_eBuilder.Controllers
         }
 
 
-        //Get the left and taken leave counts for the relevant time
+        /// <summary>
+        /// Get the left and taken leave counts for the relevant time
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/Leaves/LeaveCount")]
         public HttpResponseMessage GetLeaveCount(string EID)
@@ -204,7 +221,11 @@ namespace API_eBuilder.Controllers
         }
 
 
-        //Get all the leaves of managed employees of a manager by providing EID of Manager
+        /// <summary>
+        /// Get all the leaves of managed employees of a manager by providing EID of Manager
+        /// </summary>
+        /// <param name="ManagerID"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/Leaves/GetManaged")]
         public HttpResponseMessage GetManaged(string ManagerID)
@@ -242,44 +263,54 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-        
-        //Add a leave for a future date
+
+        /// <summary>
+        /// Add a leave for a future date in normal way
+        /// </summary>
+        /// <param name="leave"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post([FromBody]leav leave)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
-                    //check whether a leave exists for the given day for the employee
-                    var entity = entities.leavs.FirstOrDefault(l => l.EID == leave.EID && l.date == leave.date);
+                    
                     if (DateTime.Compare(leave.date, DateTime.Today) < 0)
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid field date");
                     }
 
+
+                    //check whether a leave exists for the given day for the employee
+                    var entity = entities.leavs.FirstOrDefault(l => l.EID == leave.EID && l.date == leave.date);
+                                                            
                     if (entity != null)
                     {
                         return Request.CreateResponse(HttpStatusCode.BadRequest, "Leave Already exists");
                     }
-                    //check whether the maximum allowed leaves for the period has been taken
-
-                    leave.jobCategory = entities.employees.FirstOrDefault(e => e.EID == leave.EID).jobCategory;
-                    var maxLeaves = entities.leave_type.FirstOrDefault(lt => lt.leaveCategory == leave.leaveCategory && lt.jobCategory == leave.jobCategory).maxAllowed;
                     
+                    
+                    leave.jobCategory = entities.employees.FirstOrDefault(e => e.EID == leave.EID).jobCategory;
+
+                    //Check whether the leaveCategory exists
+                    var maxLeaves = entities.leave_type.FirstOrDefault(lt => lt.leaveCategory == leave.leaveCategory && lt.jobCategory == leave.jobCategory).maxAllowed;                    
                     if (maxLeaves == 0)
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Incompatible leave type");
                     }
 
+                    //check whether the maximum allowed leaves for the period has been taken
                     var leavesTaken = entities.leavs.Where(l => l.EID == leave.EID && l.leaveCategory == leave.leaveCategory && l.date.Year == leave.date.Year).Count();
                     if (leavesTaken >= maxLeaves)
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No leaves available");
                     }
+
+
                     entities.leavs.Add(leave);                    
                     var man = entities.employees.FirstOrDefault(e => e.EID == leave.EID);
 
-                    // List<employee> man = (List<employee>)entities.Entry(emp).Property("employee").CurrentValue;
                     entities.Entry(man).Collection("employees").Load();
                     if (man.employees.Any())
                     {
@@ -316,10 +347,68 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Add a leave for a past date for cover not enogh working hours
-       // public HttpResponseMessage 
+        /// <summary>
+        /// Add a leave for a past date to cover not enough working hours
+        /// </summary>
+        /// <param name="leave"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/Leaves/ApplyEx")]
+        public HttpResponseMessage PostEx([FromBody] leav leave)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    
+                    if (DateTime.Compare(leave.date, DateTime.Today.AddDays(-30)) < 0)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The date should be within last 30 days.");
+                    }
 
-        //Delete a leave by giving the LID
+                    //Check whether the a leave eixsts for the fiven date
+                    var entity = entities.leavs.FirstOrDefault(l => l.EID == leave.EID && l.date == leave.date);                    
+                    if (entity != null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Leave Already exists");
+                    }
+
+                    //get the jobCategory for the leave
+                    leave.jobCategory = entities.employees.FirstOrDefault(e => e.EID == leave.EID).jobCategory;
+
+                    //Check whether the leaveCategory exists
+                    var maxLeaves = entities.leave_type.FirstOrDefault(lt => lt.leaveCategory == leave.leaveCategory && lt.jobCategory == leave.jobCategory).maxAllowed;
+                    if (maxLeaves == 0)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Incompatible leave type");
+                    }
+
+                    //check whether the maximum allowed leaves for the period has been taken
+                    var leavesTaken = entities.leavs.Where(l => l.EID == leave.EID && l.leaveCategory == leave.leaveCategory && l.date.Year == leave.date.Year).Count();
+                    if (leavesTaken >= maxLeaves)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No leaves available");
+                    }
+
+                    entities.leavs.Add(leave);
+                    entities.SaveChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.Created, leave);
+
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+        }
+
+        /// <summary>
+        /// Delete a leave by giving the LID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -345,7 +434,12 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Update the date, leaveCategory and reason by providing LID
+        /// <summary>
+        /// Update the date, leaveCategory and reason by providing LID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="leave"></param>
+        /// <returns></returns>
         public HttpResponseMessage Put(int id, [FromBody]leav leave)
         {
             try

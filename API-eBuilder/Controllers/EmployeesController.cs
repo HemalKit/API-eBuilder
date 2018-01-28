@@ -13,8 +13,12 @@ namespace API_eBuilder.Controllers
 
     public class EmployeesController : ApiController
     {
-        
-        //Get an employee's details by giving EID
+
+        /// <summary>
+        /// Get an employee's details by giving EID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(string id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -31,8 +35,13 @@ namespace API_eBuilder.Controllers
 
             }
         }
-        
-        //Get all the employees or the employees by gender or jobCategory, all parameters are optional
+
+        /// <summary>
+        /// Get all the employees or the employees by gender or jobCategory, all parameters are optional
+        /// </summary>
+        /// <param name="gender"></param>
+        /// <param name="jobCategory"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(string gender = "all", string jobCategory = "all")
         {
             try
@@ -69,7 +78,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Add an employee
+        /// <summary>
+        /// Add an employee
+        /// </summary>
+        /// <param name="emp"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post([FromBody] employee emp)
         {
             try
@@ -100,7 +113,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Delete an employee by providing EID
+        /// <summary>
+        /// Delete an employee by providing EID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(string id)
         {
             try
@@ -126,7 +143,12 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Update the details of employee
+        /// <summary>
+        /// Update the details of employee
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="emp"></param>
+        /// <returns></returns>
         public HttpResponseMessage Put(string id, [FromBody]employee emp)
         {
             try
@@ -162,7 +184,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Change Password by providing EID and old password
+        /// <summary>
+        /// Change Password by providing EID and old password
+        /// </summary>
+        /// <param name="credential"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("api/Employees/ChangePassword")]
         public HttpResponseMessage PutPassword(changePasswordCredential credential)
@@ -197,7 +223,11 @@ namespace API_eBuilder.Controllers
         }
 
 
-        //Send an verification code to the email to reset password
+        /// <summary>
+        /// Send an verification code to the email to reset password
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("api/Employees/ForgotPassword")]
         public HttpResponseMessage ForgotPassword([FromBody]string email)
@@ -240,7 +270,11 @@ namespace API_eBuilder.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, "Email with a verification code was sent to the given email.");
         }
 
-        //Reset password when forgot password by providing verification code sent in ForgotPassword action
+        /// <summary>
+        /// Reset password when forgot password by providing verification code sent in ForgotPassword action
+        /// </summary>
+        /// <param name="credential"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("api/Employees/ResetPassword")]
         public HttpResponseMessage ResetPassword(forgotPasswordCredential credential)

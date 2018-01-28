@@ -26,18 +26,16 @@ namespace API_eBuilder.Controllers
                     }
                     else
                     {
-                        var empl = new employee();
-                        emp.EID = "-1";
-                        var response = Request.CreateResponse(HttpStatusCode.NotFound, empl);
+                        
+                        var response = Request.CreateResponse(HttpStatusCode.NotFound, new employee());
                         return response;
                     }
 
                 }
                 else
                 {
-                    var empl = new employee();
-                    emp.EID = "-1";
-                    return Request.CreateResponse(HttpStatusCode.NotFound, empl);
+                    
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new employee());
                 }
             }
 

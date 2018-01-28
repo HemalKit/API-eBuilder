@@ -10,16 +10,13 @@ namespace API_eBuilder.Controllers
 {
     public class LeaveTypesController : ApiController
     {
-        /*public IEnumerable<leave_type> Get()
-        {
-            using (ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.leave_type.ToList();
-
-            }
-        }*/
-        
-        public HttpResponseMessage Get([FromUri]string jobCategory = "all", [FromUri] string leaveCategory="all")
+        /// <summary>
+        /// Get the leave types by leaveCategory or jobCategory, All parameters are optional
+        /// </summary>
+        /// <param name="jobCategory"></param>
+        /// <param name="leaveCategory"></param>
+        /// <returns></returns>
+        public HttpResponseMessage Get([FromUri]string jobCategory = "all", [FromUri]string leaveCategory="all")
         {
             try
             {
@@ -65,6 +62,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a new leaveType
+        /// </summary>
+        /// <param name="leaveType"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post([FromBody] leave_type leaveType)
         {
             try
@@ -86,6 +88,13 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the maxAllowed number of leaves for a leave type
+        /// </summary>
+        /// <param name="jobCategory"></param>
+        /// <param name="leaveCategory"></param>
+        /// <param name="leaveType"></param>
+        /// <returns></returns>
         public HttpResponseMessage Put(string jobCategory, string leaveCategory ,[FromBody]leave_type leaveType)
         {
             try
@@ -113,6 +122,12 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a leave type
+        /// </summary>
+        /// <param name="jobCategory"></param>
+        /// <param name="leaveCategory"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(string jobCategory, string leaveCategory)
         {
             try
@@ -139,7 +154,6 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
 
     }
 }

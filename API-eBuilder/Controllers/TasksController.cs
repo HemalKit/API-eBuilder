@@ -10,15 +10,11 @@ namespace API_eBuilder.Controllers
 {
     public class TasksController : ApiController
     {
-        public IEnumerable<task> Get()
-        {
-            using (ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.tasks.ToList();
-
-            }
-        }
-
+        /// <summary>
+        /// Get a task by providing TID as id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -36,7 +32,13 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Post([FromBody] task t)
+
+        /// <summary>
+        /// Add a new Task
+        /// </summary>
+        /// <param name="newTask"></param>
+        /// <returns></returns>
+        public HttpResponseMessage Post([FromBody] task newTask)
         {
             try
             {
@@ -44,10 +46,10 @@ namespace API_eBuilder.Controllers
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
 
-                    entities.tasks.Add(t);
+                    entities.tasks.Add(newTask);
                     entities.SaveChanges();
-                    var message = Request.CreateResponse(HttpStatusCode.OK, t);
-                    message.Headers.Location = new Uri(Request.RequestUri + t.TID.ToString());
+                    var message = Request.CreateResponse(HttpStatusCode.OK, newTask);
+                    message.Headers.Location = new Uri(Request.RequestUri + newTask.TID.ToString());
                     return message;
                 }
             }
@@ -57,6 +59,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a task
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -84,6 +91,12 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Update time, date, activity or status of an existing task
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public HttpResponseMessage Put(int id, [FromBody]task t)
         {
             try

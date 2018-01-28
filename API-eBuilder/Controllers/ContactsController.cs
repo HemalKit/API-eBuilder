@@ -10,7 +10,11 @@ namespace API_eBuilder.Controllers
 {
     public class ContactsController : ApiController
     {
-        //Get the list of contacts by EID
+        /// <summary>
+        /// Get the list of contacts by EID
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(string EID)
         {
             try
@@ -28,7 +32,11 @@ namespace API_eBuilder.Controllers
 
         }
 
-        //Add an contact
+        /// <summary>
+        /// Add an contact
+        /// </summary>
+        /// <param name="con"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post(contact con)
         {
             try
@@ -46,7 +54,12 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Update a Phone NUmber of a contact
+        /// <summary>
+        /// Update a Phone NUmber of a contact
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="con"></param>
+        /// <returns></returns>
         public HttpResponseMessage Put(int id, [FromBody] contact con)
         {
             try
@@ -72,7 +85,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Delete a contact
+        /// <summary>
+        /// Delete a contact
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try

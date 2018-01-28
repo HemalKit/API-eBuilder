@@ -10,9 +10,12 @@ namespace API_eBuilder.Controllers
 {
     public class ApprovalsController : ApiController
     {
-        
 
-        //Get the approval by APID
+        /// <summary>
+        /// Get the approval by APID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -30,7 +33,14 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Get the approvals by ManagerID or LID or status. All parameters are optional
+
+        /// <summary>
+        /// Get the approvals by ManagerID or LID or status. All parameters are optional
+        /// </summary>
+        /// <param name="LID"></param>
+        /// <param name="ManagerID"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int LID=0 , string ManagerID="all", string status = "all")
         {
             try
@@ -80,8 +90,13 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-        
-        //Add an approval the default 
+
+
+        /// <summary>
+        /// Add an approval
+        /// </summary>
+        /// <param name="appr"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post([FromBody] approval appr)
         {
             try
@@ -108,7 +123,12 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Delete an approval
+
+        /// <summary>
+        /// Delete an approval
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -135,7 +155,13 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Update the status of an approval
+
+        /// <summary>
+        /// Update the status of an approval
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="appr"></param>
+        /// <returns></returns>
         public HttpResponseMessage Put(int id, [FromBody]approval appr)
         {
             try

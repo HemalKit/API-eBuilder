@@ -11,14 +11,12 @@ namespace API_eBuilder.Controllers
 {
     public class TrackingsController : ApiController
     {
-        public IEnumerable<tracking> Get()
-        {
-            using(ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.trackings.ToList();
-            }
-        }
 
+        /// <summary>
+        /// Get the list of duty leaves by providing DLID
+        /// </summary>
+        /// <param name="DLID"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int DLID )
         {
             try
@@ -42,26 +40,29 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
-        public HttpResponseMessage Post([FromBody]trackingWithEID tr)
+        /// <summary>
+        /// Add a tracking by providing EID and location details 
+        /// </summary>
+        /// <param name="trackWithEID"></param>
+        /// <returns></returns>
+        public HttpResponseMessage Post([FromBody]trackingWithEID trackWithEID)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
-                    var DLID = entities.duty_leave.FirstOrDefault(dl => dl.EID == tr.EID && dl.date.Year == DateTime.Now.Year
+                    var DLID = entities.duty_leave.FirstOrDefault(dl => dl.EID == trackWithEID.EID && dl.date.Year == DateTime.Now.Year
                      && dl.date.Month == DateTime.Now.Month && dl.date.Day == DateTime.Now.Day).DLID;
                     tracking newTracking = new tracking();
                     newTracking.DLID = DLID;
-                    newTracking.latitude = tr.latitude;
-                    newTracking.longitude = tr.longitude;
+                    newTracking.latitude = trackWithEID.latitude;
+                    newTracking.longitude = trackWithEID.longitude;
                     newTracking.time = new TimeSpan(DateTime.Now.Hour+5, DateTime.Now.Minute+30, DateTime.Now.Second);
-
 
                     entities.trackings.Add(newTracking);
                     entities.SaveChanges();
                     var message = Request.CreateResponse(HttpStatusCode.OK, newTracking);
-                    message.Headers.Location = new Uri(Request.RequestUri + tr.TRID.ToString());
+                    message.Headers.Location = new Uri(Request.RequestUri + trackWithEID.TRID.ToString());
                     return message;
                 }
             }
@@ -71,6 +72,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Delet a tracking by providing TRID as id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try

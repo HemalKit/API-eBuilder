@@ -12,7 +12,11 @@ namespace API_eBuilder.Controllers
     public class DutyLeavesController : ApiController
     {
 
-        //Get the duty leave by providing DLID
+        /// <summary>
+        /// Get the duty leave by providing DLID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -43,7 +47,13 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Get the list of duty leaves of an employees or all employees within a time range. All parameters are optional
+        /// <summary>
+        /// Get the list of duty leaves of an employees or all employees within a time range. All parameters are optional
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(string EID = "all", DateTime? startDate = null, DateTime? endDate = null)
         {
             try
@@ -111,7 +121,13 @@ namespace API_eBuilder.Controllers
         }
 
 
-        //Get the list of duty leaves of employees managed by a manager when EID of manager is given. Range is optional
+        /// <summary>
+        /// Get the list of duty leaves of employees managed by a manager when EID of manager is given. Range is optional
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         [Route("api/DutyLeaves/GetManaged")]
         public HttpResponseMessage GetManaged(string EID, DateTime? startDate = null, DateTime? endDate = null)
         {
@@ -181,7 +197,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Add an dutyleave. One dutyleave is allowed for one employee in a single day.
+        /// <summary>
+        /// Add an dutyleave. One dutyleave is allowed for one employee in a single day
+        /// </summary>
+        /// <param name="dutyLeave"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post([FromBody] duty_leave dutyLeave)
         {
             try
@@ -216,7 +236,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Delete a dutyleave by providing DLID
+        /// <summary>
+        /// Delete a dutyleave by providing DLID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -244,7 +268,12 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        //Update appointmnet time, date and end time of a dutyleave by providing DLID
+        /// <summary>
+        /// Update appointmnet time, date and end time of a dutyleave by providing DLID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dutyLeave"></param>
+        /// <returns></returns>
         public HttpResponseMessage Put(int id, [FromBody]duty_leave dutyLeave)
         {
             try

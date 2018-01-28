@@ -10,14 +10,11 @@ namespace API_eBuilder.Controllers
 {
     public class NotificationsController : ApiController
     {
-        /*public IEnumerable<notification> Get()
-        {
-            using(ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.notifications.ToList();
-            }
-        }*/
-
+        /// <summary>
+        /// Get a notification by NID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Get(int id)
         {
             try
@@ -42,48 +39,59 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        public HttpResponseMessage Get(DateTime? date = null, string EID = "all")
+        /// <summary>
+        /// Get the notiifcations for a paticular employee with or without providing date
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public HttpResponseMessage Get(string EID ,DateTime? date = null)
         {
             try
             {
-                using(ebuilderEntities entites = new ebuilderEntities())
+                using (ebuilderEntities entites = new ebuilderEntities())
                 {
 
-                    var parameters = "";
-                    parameters += date == null ? "0" : "1";
-                    parameters += EID == "all" ? "0" : "1";
-
                     var entity = new List<notification>();
-                    switch (parameters)
+                    if (date == null)
                     {
-                        case "00":
-                            entity = entites.notifications.ToList();
-                            break;
-                        //case "01":
-                           // entity = entites.notifications.Where(n => n)
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                        var allNotifications = entites.notifications.ToList();
+                        foreach (var notf in allNotifications)
+                        {
+                            entites.Entry(notf).Collection("employees").Load();
+                            if (notf.employees.Any(e => e.EID == EID))
+                            {
+                                entity.Add(notf);
+                            }
 
-
-
-                    /*if( EID == "all")
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, entites.notifications.Where(n => n.date == date).ToList());
-
+                        }
                     }
                     else
                     {
-                        // Need to get the notifications related to a particular employee
-                        return Request.CreateResponse(HttpStatusCode.OK, entites.notifications.Where(n => n.date == date).ToList());                       
-                    }*/
+                        var allNotifications = entites.notifications.Where(n=>n.date==date).ToList();
+                        foreach (var notf in allNotifications)
+                        {
+                            entites.Entry(notf).Collection("employees").Load();
+                            if (notf.employees.Any(e => e.EID == EID))
+                            {
+                                entity.Add(notf);
+                            }
+                        }
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 
+        /// <summary>
+        /// Add an notification 
+        /// </summary>
+        /// <param name="not"></param>
+        /// <returns></returns>
         public HttpResponseMessage Post([FromBody]notification not )
         {
             try
@@ -105,6 +113,11 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a notification by providing NID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(int id)
         {
             try
