@@ -11,15 +11,8 @@ namespace API_eBuilder.Controllers
 {
     public class AttendanceController : ApiController
     {
-        /*public IEnumerable<attendance> Get()
-        {
-            using (ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.attendances.ToList();
 
-            }
-        }*/
-
+        //Get Attendance by AID
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -46,6 +39,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        //Get the attendance by date or EID, all parameters are optional
         public HttpResponseMessage Get(DateTime? date = null, string EID = "all")
         {
             try
@@ -96,8 +90,9 @@ namespace API_eBuilder.Controllers
             }
         } 
 
+
+        //Get the attendance of an EID within a given range
         [HttpGet]
-        //[Route("api/attendance/{EID}/{*startDate:datetime}/{*endDate:datetime}")]
         public HttpResponseMessage Get(string EID, DateTime startDate, DateTime endDate)
         {
             try
@@ -129,13 +124,23 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
+        //Add an attendance to the database
         public HttpResponseMessage Post([FromBody] attendance att)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    if (att.EID == null || att.checkIn == null || att.checkOut == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Some fields are empty");
+                    }
+                    var entity = entities.attendances.FirstOrDefault(a => a.EID == att.EID && a.date == att.date);
+                    if(entity!= null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Attendance the given EID and date already exists.");
+                    }
+
                     entities.attendances.Add(att);
                     entities.SaveChanges();
                     var message = Request.CreateResponse(HttpStatusCode.OK, att);
@@ -149,6 +154,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        //Delete an attendance
         public HttpResponseMessage Delete(int id)
         {
             try

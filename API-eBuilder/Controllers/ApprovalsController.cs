@@ -10,14 +10,9 @@ namespace API_eBuilder.Controllers
 {
     public class ApprovalsController : ApiController
     {
-        /*public IEnumerable<approval> Get()
-        {
-            using (ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.approvals.ToList();
-            }
-        }*/
+        
 
+        //Get the approval by APID
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -35,7 +30,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
+        //Get the approvals by ManagerID or LID or status. All parameters are optional
         public HttpResponseMessage Get(int LID=0 , string ManagerID="all", string status = "all")
         {
             try
@@ -85,16 +80,21 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
         
-
+        //Add an approval the default 
         public HttpResponseMessage Post([FromBody] approval appr)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    var entity = entities.approvals.FirstOrDefault(a => a.ManagerID == appr.ManagerID && a.LID == appr.LID);
+                    if(entity != null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Approval already available with given datails");
+                    }
 
+                    appr.status = "pending";
                     entities.approvals.Add(appr);
                     entities.SaveChanges();
                     var message = Request.CreateResponse(HttpStatusCode.OK, appr);
@@ -108,6 +108,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        //Delete an approval
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -134,6 +135,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        //Update the status of an approval
         public HttpResponseMessage Put(int id, [FromBody]approval appr)
         {
             try
@@ -150,7 +152,6 @@ namespace API_eBuilder.Controllers
                     else
                     {
                         entity.status = appr.status;
-
                         entities.SaveChanges();
                         return Request.CreateResponse(HttpStatusCode.OK, entity);
                     }

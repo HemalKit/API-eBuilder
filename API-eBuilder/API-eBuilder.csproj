@@ -204,6 +204,7 @@
     <Compile Include="Models\count.cs" />
     <Compile Include="Models\dutyLeaveWithName.cs" />
     <Compile Include="Models\forgotPasswordCredential.cs" />
+    <Compile Include="Models\leavWithStatusAndName.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\trackingWithEID.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

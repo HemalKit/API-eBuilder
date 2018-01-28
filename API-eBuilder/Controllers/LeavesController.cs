@@ -1,4 +1,5 @@
-﻿using DataAccess;
+﻿using API_eBuilder.Models;
+using DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,7 @@ namespace API_eBuilder.Controllers
 {
     public class LeavesController : ApiController
     {
-        /*public IEnumerable<leav> Get()
-        {
-            using (ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.leavs.ToList();
-
-            }
-        }*/
-
+        //Get the leave by providing LID
         public HttpResponseMessage Get(int id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -107,8 +100,7 @@ namespace API_eBuilder.Controllers
         }  */
 
 
-
-        //Get accepted leaves for a given EID within a given range
+        //Get list of accepted leaves for a given EID within a given range
         [HttpGet]
         public HttpResponseMessage Get(string EID, DateTime startDate, DateTime endDate)
         {
@@ -117,14 +109,15 @@ namespace API_eBuilder.Controllers
                 using(ebuilderEntities entities = new ebuilderEntities())
                 {
                     var allLeaves = entities.leavs.Where(l => l.EID == EID && (DateTime.Compare(startDate, l.date) < 0 && DateTime.Compare(l.date, endDate) < 0)).ToList();
-                    var entity = new List<leav>();
+                    var entity = new List<leavWithStatusAndName>();
                     foreach( leav l in allLeaves)
                     {
                         foreach(approval app in entities.approvals.Where(a => a.LID == l.LID).ToList())
                         {
                             if(app.status == "accepted")
                             {
-                                entity.Add(l); //select only the accepted leaves
+                                var levStatusName = new leavWithStatusAndName(l);                                
+                                entity.Add(levStatusName); //select only the accepted leaves
                             }
                         }                        
                     }
@@ -137,8 +130,10 @@ namespace API_eBuilder.Controllers
             }
         }
 
+
+        //Get the available leaves left for the relevant time
         [HttpGet]
-        [Route("api/Leaves/GetAvailable/{EID}")]
+        [Route("api/Leaves/GetAvailable")]
         public HttpResponseMessage GetLeaves(string EID)
         {
             try
@@ -164,12 +159,108 @@ namespace API_eBuilder.Controllers
         }
 
 
+        //Get the left and taken leave counts for the relevant time
+        [HttpGet]
+        [Route("api/Leaves/LeaveCount")]
+        public HttpResponseMessage GetLeaveCount(string EID)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var leavesApplied = entities.leavs.Where(l => l.EID == EID && l.date.Year == DateTime.Now.Year);
+                    allLeaveCount allLeaves= new allLeaveCount();
+
+                    //Get the accepted leaves only
+                    var entity = (from l in leavesApplied join ap in entities.approvals on l.LID equals ap.LID where ap.status == "accepted" select l).ToList();
+
+                    var leaveTypes = (from e in entities.employees join lt in entities.leave_type on e.jobCategory equals lt.jobCategory where e.jobCategory == lt.jobCategory  && e.EID == EID select lt).ToList();
+                    foreach (var leaveType in leaveTypes)
+                    {
+                        count leaveCount = new count();
+                        leaveCount.name = leaveType.leaveCategory;
+                        foreach (var leave in entity)
+                        {
+                            if (leave.leaveCategory == leaveType.leaveCategory)
+                            {
+                                leaveCount.number++;                                
+                            }
+                            
+                        }
+                        allLeaves.taken.Add(leaveCount);
+                        count leftLeaveCount = new count();
+                        leftLeaveCount.name = leaveType.leaveCategory;
+                        leftLeaveCount.number = leaveType.maxAllowed - leaveCount.number;
+
+                        allLeaves.left.Add(leftLeaveCount);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, allLeaves);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest,ex);
+            }
+        }
+
+
+        //Get all the leaves of managed employees of a manager by providing EID of Manager
+        [HttpGet]
+        [Route("api/Leaves/GetManaged")]
+        public HttpResponseMessage GetManaged(string ManagerID)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var manager = entities.employees.FirstOrDefault(e => e.EID == ManagerID);
+
+                    if(manager == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No Manager exists for the given EID");
+                    }
+                    entities.Entry(manager).Collection("employee1").Load();
+
+                    var entity = new List<leavWithStatusAndName>();
+                    foreach(var emp in manager.employee1)
+                    {
+                        var empLeaves = entities.leavs.Where(e => e.EID == emp.EID).ToList();
+                        foreach(leav l in empLeaves)
+                        {
+                            var leavNameStatus = new leavWithStatusAndName(l);
+                            entity.Add(leavNameStatus);
+                        }
+                        
+                    }
+                                        
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
+                    
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+        
+        //Add a leave for a future date
         public HttpResponseMessage Post([FromBody]leav leave)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    //check whether a leave exists for the given day for the employee
+                    var entity = entities.leavs.FirstOrDefault(l => l.EID == leave.EID && l.date == leave.date);
+                    if (DateTime.Compare(leave.date, DateTime.Today) < 0)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid field date");
+                    }
+
+                    if (entity != null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Leave Already exists");
+                    }
                     //check whether the maximum allowed leaves for the period has been taken
 
                     leave.jobCategory = entities.employees.FirstOrDefault(e => e.EID == leave.EID).jobCategory;
@@ -185,11 +276,7 @@ namespace API_eBuilder.Controllers
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No leaves available");
                     }
-
-
-
-                    entities.leavs.Add(leave);
-                    
+                    entities.leavs.Add(leave);                    
                     var man = entities.employees.FirstOrDefault(e => e.EID == leave.EID);
 
                     // List<employee> man = (List<employee>)entities.Entry(emp).Property("employee").CurrentValue;
@@ -209,11 +296,18 @@ namespace API_eBuilder.Controllers
                         message.Headers.Location = new Uri(Request.RequestUri + leave.LID.ToString());
                         return message;
                     }
+                    else if(leave.jobCategory=="HR Admin")
+                    {
+                        var message = Request.CreateResponse(HttpStatusCode.OK, leave);
+                        entities.SaveChanges();
+                        message.Headers.Location = new Uri(Request.RequestUri + leave.LID.ToString());
+                        return message;                        
+                    }
                     else
                     {
                         var message = Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error occured");
                         return message;
-                    }                    
+                    }
                 }
             }
             catch (Exception ex)
@@ -222,6 +316,10 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        //Add a leave for a past date for cover not enogh working hours
+       // public HttpResponseMessage 
+
+        //Delete a leave by giving the LID
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -247,6 +345,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        //Update the date, leaveCategory and reason by providing LID
         public HttpResponseMessage Put(int id, [FromBody]leav leave)
         {
             try

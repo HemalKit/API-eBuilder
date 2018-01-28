@@ -11,15 +11,6 @@ namespace API_eBuilder.Controllers
 {
     public class DutyLeavesController : ApiController
     {
-       /* public IEnumerable<duty_leave> Get()
-        {
-            using (ebuilderEntities entities = new ebuilderEntities())
-            {
-                return entities.duty_leave.ToList();
-
-            }
-        }*/
-
 
         //Get the duty leave by providing DLID
         public HttpResponseMessage Get(int id)
@@ -51,7 +42,6 @@ namespace API_eBuilder.Controllers
 
             }
         }
-
 
         //Get the list of duty leaves of an employees or all employees within a time range. All parameters are optional
         public HttpResponseMessage Get(string EID = "all", DateTime? startDate = null, DateTime? endDate = null)
@@ -191,18 +181,28 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
-
+        //Add an dutyleave. One dutyleave is allowed for one employee in a single day.
         public HttpResponseMessage Post([FromBody] duty_leave dutyLeave)
         {
             try
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    if (dutyLeave.EID == null || dutyLeave.location == null || dutyLeave.date == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Some fieds are empty");
+                    }
+
                     if (DateTime.Compare(dutyLeave.date,DateTime.Today)<0)
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid date");
                     }
+                    var entity = entities.duty_leave.FirstOrDefault(dl => dl.EID == dutyLeave.EID && dl.date == dutyLeave.date);
+                    if (entity != null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Duty leave for given EID and date alredy exists");
+                    }
+
                     entities.duty_leave.Add(dutyLeave);
                     entities.SaveChanges();
                     var message = Request.CreateResponse(HttpStatusCode.OK, dutyLeave);
@@ -216,7 +216,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
+        //Delete a dutyleave by providing DLID
         public HttpResponseMessage Delete(int id)
         {
             try
@@ -244,7 +244,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
+        //Update appointmnet time, date and end time of a dutyleave by providing DLID
         public HttpResponseMessage Put(int id, [FromBody]duty_leave dutyLeave)
         {
             try

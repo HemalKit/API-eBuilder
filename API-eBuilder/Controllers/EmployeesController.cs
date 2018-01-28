@@ -13,16 +13,8 @@ namespace API_eBuilder.Controllers
 
     public class EmployeesController : ApiController
     {
-
-        /* public IEnumerable<employee> Get()
-         {
-             using(ebuilderEntities entities = new ebuilderEntities())
-             {
-                 return entities.employees.ToList();
-
-             }
-         }*/
-
+        
+        //Get an employee's details by giving EID
         public HttpResponseMessage Get(string id)
         {
             using (ebuilderEntities entities = new ebuilderEntities())
@@ -30,7 +22,6 @@ namespace API_eBuilder.Controllers
                 var entity = entities.employees.FirstOrDefault(e => e.EID == id);
                 if (entity != null)
                 {
-
                     return Request.CreateResponse(HttpStatusCode.OK, entity);
                 }
                 else
@@ -40,7 +31,8 @@ namespace API_eBuilder.Controllers
 
             }
         }
-        //[Route("api/employees/jobcategory/{jobcategory:alpha?}/{gender:alpha?}")]
+        
+        //Get all the employees or the employees by gender or jobCategory, all parameters are optional
         public HttpResponseMessage Get(string gender = "all", string jobCategory = "all")
         {
             try
@@ -77,15 +69,23 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
-
+        //Add an employee
         public HttpResponseMessage Post([FromBody] employee emp)
         {
             try
             {
-
+                if (emp.EID == null || emp.email == null || emp.fName == null || emp.lName == null || emp.jobCategory == null || emp.gender == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Some fields are empty");
+                }
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    var entity = entities.employees.FirstOrDefault(e => e.EID == emp.EID || e.email == emp.email);
+                    if (entity != null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Employee with the given details already exists");
+                    }
+
                     emp.password = Crypto.Hash(emp.password);
                     entities.employees.Add(emp);
                     entities.SaveChanges();
@@ -100,7 +100,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
+        //Delete an employee by providing EID
         public HttpResponseMessage Delete(string id)
         {
             try
@@ -109,7 +109,7 @@ namespace API_eBuilder.Controllers
                 {
                     var entity = entities.employees.FirstOrDefault(e => e.EID == id);
                     if (entity != null)
-                    {
+                    {                        
                         entities.employees.Remove(entity);
                         entities.SaveChanges();
                         return Request.CreateResponse(HttpStatusCode.OK);
@@ -117,7 +117,6 @@ namespace API_eBuilder.Controllers
                     else
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No employee with the EID " + id + " to delete");
-
                     }
                 }
             }
@@ -127,8 +126,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
-
+        //Update the details of employee
         public HttpResponseMessage Put(string id, [FromBody]employee emp)
         {
             try
@@ -164,9 +162,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-
-
-        //Change Password
+        //Change Password by providing EID and old password
         [HttpPut]
         [Route("api/Employees/ChangePassword")]
         public HttpResponseMessage PutPassword(changePasswordCredential credential)
@@ -200,6 +196,8 @@ namespace API_eBuilder.Controllers
 
         }
 
+
+        //Send an verification code to the email to reset password
         [HttpPut]
         [Route("api/Employees/ForgotPassword")]
         public HttpResponseMessage ForgotPassword([FromBody]string email)
@@ -241,7 +239,6 @@ namespace API_eBuilder.Controllers
                 smtp.Send(message);
             return Request.CreateResponse(HttpStatusCode.OK, "Email with a verification code was sent to the given email.");
         }
-
 
         //Reset password when forgot password by providing verification code sent in ForgotPassword action
         [HttpPut]

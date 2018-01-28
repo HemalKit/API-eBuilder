@@ -18,7 +18,6 @@ namespace DataAccess
         public ebuilderEntities()
             : base("name=ebuilderEntities")
         {
-            this.Configuration.ProxyCreationEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
