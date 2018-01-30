@@ -201,6 +201,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\allLeaveCount.cs" />
+    <Compile Include="Models\appliedLeavesPercentView.cs" />
+    <Compile Include="Models\approvalView.cs" />
     <Compile Include="Models\attendanceWithWorkingHours.cs" />
     <Compile Include="Models\changePasswordCredential.cs" />
     <Compile Include="Models\count.cs" />

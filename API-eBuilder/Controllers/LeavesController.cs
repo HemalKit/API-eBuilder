@@ -264,6 +264,72 @@ namespace API_eBuilder.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Get a array of number of leaves applied in a day of a week in all months of the year
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Leaves/LeavesAppliedWeekly")]
+        public HttpResponseMessage GetLeavesWeekly()
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var allLeaves = entities.leavs.Where(l => l.date.Year == DateTime.Now.Year).ToList();
+                    var leavePercentageByWeeklyDay = new appliedLeavesPercentView();
+                    for(int dayOfWeek=1; dayOfWeek <= 7; dayOfWeek++)
+                    {
+                        switch (dayOfWeek)
+                        {
+                            case 1:
+                                int leaveCountMonday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Monday).ToList().Count;
+                                leavePercentageByWeeklyDay.Monday = Math.Round((((double)leaveCountMonday) / allLeaves.Count * 100),2);
+                                //leavePercentageByWeeklyDay.Add(new { Monday = MondayPercent });
+                                break;
+                            case 2:
+                                int leaveCountTuesday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Tuesday).ToList().Count;
+                                leavePercentageByWeeklyDay.Tuesday = Math.Round((((double)leaveCountTuesday) / allLeaves.Count * 100),2);
+                                //leavePercentageByWeeklyDay.Add(new { Tuesday = TuesdayPercent });
+                                break;
+                            case 3:
+                                int leaveCountWednesday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Wednesday).ToList().Count;
+                                leavePercentageByWeeklyDay.Wednesday = Math.Round((((double)leaveCountWednesday) / allLeaves.Count * 100),2);
+                                //leavePercentageByWeeklyDay.Add(new { Wednesday = WednesdayCount });
+                                break;
+                            case 4:
+                                int leaveCountThursday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Thursday).ToList().Count;
+                                leavePercentageByWeeklyDay.Thursday = Math.Round((((double)leaveCountThursday) / allLeaves.Count * 100),2);
+                                //leavePercentageByWeeklyDay.Add(new { Thursday = ThursdayCount });
+                                break;
+                            case 5:
+                                int leaveCountFriday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Friday).ToList().Count;
+                                leavePercentageByWeeklyDay.Friday = Math.Round((((double)leaveCountFriday) / allLeaves.Count * 100),2);
+                                //leavePercentageByWeeklyDay.Add(new { Friday = FridayCount });
+                                break;
+                            case 6:
+                                int leaveCountSaturday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Saturday).ToList().Count;
+                                leavePercentageByWeeklyDay.Saturday = Math.Round((((float)leaveCountSaturday) / allLeaves.Count * 100),2);
+                                //leavePercentageByWeeklyDay.Add(new { Saturday = SaturdayCount });
+                                break;
+                            case 7:
+                                int leaveCountSunday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Sunday).ToList().Count;
+                                leavePercentageByWeeklyDay.Sunday = Math.Round((((float)leaveCountSunday) / allLeaves.Count * 100),2);
+                                //leavePercentageByWeeklyDay.Add(new { Sunday = Sun });
+                                break;
+                        }
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, leavePercentageByWeeklyDay);                    
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
         /// <summary>
         /// Add a leave for a future date in normal way
         /// </summary>

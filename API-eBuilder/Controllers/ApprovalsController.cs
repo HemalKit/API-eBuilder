@@ -1,4 +1,5 @@
-﻿using DataAccess;
+﻿using API_eBuilder.Models;
+using DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,8 +82,10 @@ namespace API_eBuilder.Controllers
                             entity = entities.approvals.Where(a => a.LID == LID && a.ManagerID == ManagerID && a.status == status).ToList();
                             break;
                     }
-                    return Request.CreateResponse(HttpStatusCode.OK, entity);
 
+                    var approvalsViewList = new List<approvalView>();
+                    entity.ForEach(e => approvalsViewList.Add(new approvalView(e)));
+                    return Request.CreateResponse(HttpStatusCode.OK, approvalsViewList);
                 }
             }
             catch(Exception ex)
