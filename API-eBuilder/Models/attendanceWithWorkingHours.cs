@@ -22,8 +22,15 @@ namespace API_eBuilder.Models
                 var emp = entities.employees.FirstOrDefault(e => e.EID == this.EID);
                 this.fName = emp.fName;
                 this.lName = emp.lName;
-            }
+            }            
+            if(checkIn != null && checkOut != null)
+            {
+                           
+                this.workingHours = ((TimeSpan)checkOut).Subtract((TimeSpan)checkIn);
+            }           
         }
+
+        public static TimeSpan MinRequiredWH { get; set; }
 
         public int AID { get; set; }
         public System.DateTime date { get; set; }

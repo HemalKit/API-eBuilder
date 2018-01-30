@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using DataAccess;
+using API_eBuilder.Models;
 
 namespace API_eBuilder.Controllers
 {
@@ -141,6 +142,59 @@ namespace API_eBuilder.Controllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }           
+        }
+
+        /// <summary>
+        /// Calculate the Working Hours
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Notifications/LeaveApplyNotify")]
+        public HttpResponseMessage LeaveApplyNotify()
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var employeeList = entities.employees.Select(e=>e.EID).ToList();
+                    List<string> empWithLessWH = new List<string>();
+
+                    foreach(var emp in employeeList)
+                    {
+                        var attList = entities.attendances.Where(a => a.EID == emp && a.date.Month == DateTime.Now.Month).ToList();
+                        var attWithWHList = new List<attendanceWithWorkingHours>();
+                        attList.ForEach(a => attWithWHList.Add(new attendanceWithWorkingHours(a)));
+                        TimeSpan workingHours = new TimeSpan(0,0,0);
+                        attWithWHList.ForEach(a => workingHours += a.workingHours);
+                        var dutyLeaveList = entities.duty_leave.Where(dl => dl.EID == emp && dl.date.Month == DateTime.Now.Month).ToList();
+
+                        dutyLeaveList.ForEach(dl => workingHours += dl.endTime.Subtract(dl.appointmentTime));
+
+                        if (TimeSpan.Compare(workingHours, attendanceWithWorkingHours.MinRequiredWH) < 0)
+                        {
+                            empWithLessWH.Add(emp);
+                        }
+                    }
+                    var lessWHNotf = new notification();
+                    lessWHNotf.date = DateTime.Today;
+                    lessWHNotf.time = DateTime.Now.TimeOfDay;
+                    lessWHNotf.content = "Your attendance is not sufficient for this month. Consider Applying a leave for a past date";
+
+                    foreach (var e in empWithLessWH)
+                    {
+                        lessWHNotf.employees.Add(entities.employees.FirstOrDefault(em=>em.EID==e));
+                    }
+                    entities.notifications.Add(lessWHNotf);
+                    entities.SaveChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK,lessWHNotf);
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
         }
     }
 }

@@ -213,9 +213,9 @@ namespace API_eBuilder.Controllers
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Some fieds are empty");
                     }
 
-                    if (DateTime.Compare(dutyLeave.date,DateTime.Today)<0)
+                    if (DateTime.Compare(dutyLeave.date,DateTime.Today)<0 || TimeSpan.Compare(dutyLeave.appointmentTime,dutyLeave.endTime)>=0)
                     {
-                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid date");
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid date or time");
                     }
                     var entity = entities.duty_leave.FirstOrDefault(dl => dl.EID == dutyLeave.EID && dl.date == dutyLeave.date);
                     if (entity != null)

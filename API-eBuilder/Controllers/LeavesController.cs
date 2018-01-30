@@ -310,12 +310,12 @@ namespace API_eBuilder.Controllers
                                 break;
                             case 6:
                                 int leaveCountSaturday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Saturday).ToList().Count;
-                                leavePercentageByWeeklyDay.Saturday = Math.Round((((float)leaveCountSaturday) / allLeaves.Count * 100),2);
+                                leavePercentageByWeeklyDay.Saturday = Math.Round((((double)leaveCountSaturday) / allLeaves.Count * 100),2);
                                 //leavePercentageByWeeklyDay.Add(new { Saturday = SaturdayCount });
                                 break;
                             case 7:
                                 int leaveCountSunday = allLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Sunday).ToList().Count;
-                                leavePercentageByWeeklyDay.Sunday = Math.Round((((float)leaveCountSunday) / allLeaves.Count * 100),2);
+                                leavePercentageByWeeklyDay.Sunday = Math.Round((((double)leaveCountSunday) / allLeaves.Count * 100),2);
                                 //leavePercentageByWeeklyDay.Add(new { Sunday = Sun });
                                 break;
                         }
@@ -324,6 +324,81 @@ namespace API_eBuilder.Controllers
                 }
             }
             catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("api/Leaves/LeavesAppliedMonthly")]
+        public HttpResponseMessage GetLeavesMonthly()
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var allLeaves = entities.leavs.Where(l => l.date.Year == DateTime.Now.Year).ToList();
+                    var leavePercentageByMonth = new appliedLeavesPercentViewMonthly();
+
+                    for(int month = 1; month <= 12; month++)
+                    {
+                        switch (month)
+                        {
+                            case 1:
+                                int leaveCountJan = allLeaves.Where(l => l.date.Month == 1).ToList().Count;
+                                leavePercentageByMonth.January = Math.Round(((double)leaveCountJan / allLeaves.Count*100), 2);
+                                break;
+                            case 2:
+                                int leaveCountFeb = allLeaves.Where(l => l.date.Month == 2).ToList().Count;
+                                leavePercentageByMonth.February = Math.Round(((double)leaveCountFeb / allLeaves.Count*100), 2);
+                                break;
+                            case 3:
+                                int leaveCountMar = allLeaves.Where(l => l.date.Month == 3).ToList().Count;
+                                leavePercentageByMonth.March = Math.Round(((double)leaveCountMar / allLeaves.Count*100), 2);
+                                break;
+                            case 4:
+                                int leaveCountApr = allLeaves.Where(l => l.date.Month == 4).ToList().Count;
+                                leavePercentageByMonth.April = Math.Round(((double)leaveCountApr / allLeaves.Count*100), 2);
+                                break;
+                            case 5:
+                                int leaveCountMay= allLeaves.Where(l => l.date.Month == 5).ToList().Count;
+                                leavePercentageByMonth.May = Math.Round(((double)leaveCountMay/ allLeaves.Count*100), 2);
+                                break;
+                            case 6:
+                                int leaveCountJun = allLeaves.Where(l => l.date.Month == 6).ToList().Count;
+                                leavePercentageByMonth.June = Math.Round(((double)leaveCountJun/ allLeaves.Count*100), 2);
+                                break;
+                            case 7:
+                                int leaveCountJul = allLeaves.Where(l => l.date.Month == 7).ToList().Count;
+                                leavePercentageByMonth.July = Math.Round(((double)leaveCountJul / allLeaves.Count*100), 2);
+                                break;
+                            case 8:
+                                int leaveCountAug = allLeaves.Where(l => l.date.Month == 8).ToList().Count;
+                                leavePercentageByMonth.August = Math.Round(((double)leaveCountAug / allLeaves.Count*100), 2);
+                                break;
+                            case 9:
+                                int leaveCountSep = allLeaves.Where(l => l.date.Month == 9).ToList().Count;
+                                leavePercentageByMonth.September = Math.Round(((double)leaveCountSep / allLeaves.Count*100), 2);
+                                break;
+                            case 10:
+                                int leaveCountOct = allLeaves.Where(l => l.date.Month == 10).ToList().Count;
+                                leavePercentageByMonth.October = Math.Round(((double)leaveCountOct / allLeaves.Count*100), 2);
+                                break;
+                            case 11:
+                                int leaveCountNov = allLeaves.Where(l => l.date.Month == 11).ToList().Count;
+                                leavePercentageByMonth.November = Math.Round(((double)leaveCountNov / allLeaves.Count), 2);
+                                break;
+                            case 12:
+                                int leaveCountDec = allLeaves.Where(l => l.date.Month == 12).ToList().Count;
+                                leavePercentageByMonth.December = Math.Round(((double)leaveCountDec / allLeaves.Count*100), 2);
+                                break;
+                        }
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, leavePercentageByMonth);
+                }
+            }
+            catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }

@@ -25,7 +25,6 @@ namespace API_eBuilder.Controllers
                 if(entity != null)
                 {
                     attendanceWithWorkingHours att = new attendanceWithWorkingHours(entity);                    
-                    att.workingHours = GetWorkingHours(entity);
 
                     return Request.CreateResponse(HttpStatusCode.OK, att);
                 }
@@ -78,7 +77,6 @@ namespace API_eBuilder.Controllers
                     foreach(var a in entity)
                     {
                         attendanceWithWorkingHours att = new attendanceWithWorkingHours(a);
-                        att.workingHours = GetWorkingHours(a);
                         attList.Add(att);
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, attList);                   
@@ -112,7 +110,6 @@ namespace API_eBuilder.Controllers
                     foreach (var a in entity)
                     {
                         attendanceWithWorkingHours att = new attendanceWithWorkingHours(a);                        
-                        att.workingHours = GetWorkingHours(a);
                         attList.Add(att);
                     }
 
@@ -156,8 +153,7 @@ namespace API_eBuilder.Controllers
                         var attList = entities.attendances.Where(a => a.EID == emp.EID && (DateTime.Compare(startDate, a.date) < 0 && DateTime.Compare(a.date, endDate) < 0)).ToList();
                         foreach( var a in attList)
                         {
-                            var attWithWH = new attendanceWithWorkingHours(a);
-                            attWithWH.workingHours = GetWorkingHours(a);
+                            var attWithWH = new attendanceWithWorkingHours(a);                            
                             entity.Add(attWithWH);
                         }                        
                     }
@@ -236,18 +232,20 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        /// <summary>
-        /// Calculate working hours
-        /// </summary>
-        /// <param name="att"></param>
-        /// <returns></returns>
-        [NonAction]
-        public static TimeSpan GetWorkingHours(attendance att)
+
+        [HttpPost]
+        [Route("api/Attendance/MinWorkingHours")]
+        public HttpResponseMessage MinWorkingHours([FromBody]TimeSpan minWH)
         {
-            TimeSpan checkIn = (TimeSpan)att.checkIn;
-            TimeSpan checkOut = (TimeSpan)att.checkOut;
-            var workingHours = checkOut.Subtract(checkIn);
-            return workingHours;
+            try
+            {
+                attendanceWithWorkingHours.MinRequiredWH = minWH;
+                return Request.CreateResponse(HttpStatusCode.OK,"Success");
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
         }
 
     }

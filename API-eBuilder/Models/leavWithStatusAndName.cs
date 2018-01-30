@@ -15,7 +15,7 @@ namespace API_eBuilder.Models
             {
                 this.LID = leave.LID;
                 this.EID = leave.EID;
-                this.date = leave.date;
+                this.date = leave.date.Date;
                 this.reason = leave.reason;
                 this.jobCategory = leave.jobCategory;
                 this.leaveCategory = leave.leaveCategory;

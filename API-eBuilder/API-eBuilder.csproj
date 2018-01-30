@@ -203,6 +203,7 @@
     <Compile Include="Models\AccessView.cs" />
     <Compile Include="Models\allLeaveCount.cs" />
     <Compile Include="Models\appliedLeavesPercentView.cs" />
+    <Compile Include="Models\appliedLeavesPercentViewMonthly.cs" />
     <Compile Include="Models\approvalView.cs" />
     <Compile Include="Models\attendanceWithWorkingHours.cs" />
     <Compile Include="Models\changePasswordCredential.cs" />

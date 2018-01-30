@@ -23,7 +23,7 @@ namespace API_eBuilder.Models
             this.street = emp.street;
             this.city = emp.city;
             this.jobCategory = emp.jobCategory;
-            this.managerId = emp.employees.First().EID;
+            this.managerId = emp.employees.Any() ? emp.employees.First().EID : null;
         }
 
 
