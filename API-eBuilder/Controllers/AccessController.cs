@@ -20,14 +20,16 @@ namespace API_eBuilder.Controllers
                 {
                     if (string.Compare(Crypto.Hash(login.password), emp.password) == 0)
                     {
-                        var response =  Request.CreateResponse(HttpStatusCode.OK, emp);
+                        entities.Entry(emp).Collection("employees").Load();
+                        var employeeData = new AccessView(emp);
+                        var response =  Request.CreateResponse(HttpStatusCode.OK, employeeData);
                         response.Headers.Location = new Uri("http://localhost:61355/api/Employees/" + emp.EID);
                         return response;
                     }
                     else
                     {
                         
-                        var response = Request.CreateResponse(HttpStatusCode.NotFound, new employee());
+                        var response = Request.CreateResponse(HttpStatusCode.NotFound, new AccessView(new employee()));
                         return response;
                     }
 
@@ -35,7 +37,7 @@ namespace API_eBuilder.Controllers
                 else
                 {
                     
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new employee());
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new AccessView(new employee()));
                 }
             }
 

@@ -200,6 +200,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AccessView.cs" />
     <Compile Include="Models\allLeaveCount.cs" />
     <Compile Include="Models\appliedLeavesPercentView.cs" />
     <Compile Include="Models\approvalView.cs" />
