@@ -186,32 +186,36 @@ namespace API_eBuilder.Controllers
                 using(ebuilderEntities entities = new ebuilderEntities())
                 {
                     var leavesApplied = entities.leavs.Where(l => l.EID == EID && l.date.Year == DateTime.Now.Year);
-                    allLeaveCount allLeaves= new allLeaveCount();
+                    var allLeavesCount= new List<count>();
 
                     //Get the accepted leaves only
                     var entity = (from l in leavesApplied join ap in entities.approvals on l.LID equals ap.LID where ap.status == "accepted" select l).ToList();
 
+                    //get the leave types related to the employee's job category
                     var leaveTypes = (from e in entities.employees join lt in entities.leave_type on e.jobCategory equals lt.jobCategory where e.jobCategory == lt.jobCategory  && e.EID == EID select lt).ToList();
                     foreach (var leaveType in leaveTypes)
                     {
                         count leaveCount = new count();
-                        leaveCount.name = leaveType.leaveCategory;
+                        leaveCount.leaveCategory = leaveType.leaveCategory;
                         foreach (var leave in entity)
                         {
                             if (leave.leaveCategory == leaveType.leaveCategory)
                             {
-                                leaveCount.number++;                                
-                            }
-                            
+                                if(leaveType.leaveCategory == "short leave"||leaveType.leaveCategory=="half day")
+                                {
+                                    if(leave.date.Month == DateTime.Now.Month)
+                                    {
+                                        leaveCount.takenCount++;
+                                    }
+                                }
+                                leaveCount.takenCount++;                                
+                            }                            
                         }
-                        allLeaves.taken.Add(leaveCount);
-                        count leftLeaveCount = new count();
-                        leftLeaveCount.name = leaveType.leaveCategory;
-                        leftLeaveCount.number = leaveType.maxAllowed - leaveCount.number;
-
-                        allLeaves.left.Add(leftLeaveCount);
+                        
+                        leaveCount.leftCount = leaveType.maxAllowed - leaveCount.takenCount;
+                        allLeavesCount.Add(leaveCount);
                     }
-                    return Request.CreateResponse(HttpStatusCode.OK, allLeaves);
+                    return Request.CreateResponse(HttpStatusCode.OK, allLeavesCount);
                 }
             }
             catch(Exception ex)

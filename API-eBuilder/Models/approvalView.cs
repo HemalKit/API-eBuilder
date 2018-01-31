@@ -24,7 +24,7 @@ namespace API_eBuilder.Models
                 this.date = leave.date;
 
                 var emp = entities.employees.FirstOrDefault(e => e.EID == leave.EID);
-
+                this.EID = emp.EID;
                 this.fName = emp.fName;
                 this.lName = emp.lName;
             }
@@ -39,5 +39,6 @@ namespace API_eBuilder.Models
         public string leaveCategory { get; set; }
         public string reason { get; set; }
         public DateTime date { get; set; }
+        public string EID { get; set; }
     }
 }

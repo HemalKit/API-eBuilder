@@ -7,7 +7,8 @@ namespace API_eBuilder.Models
 {
     public class count
     {
-        public string name { get; set; }
-        public int number { get; set; }
+        public string leaveCategory { get; set; }
+        public int takenCount { get; set; }
+        public int leftCount { get; set; }
     }
 }
