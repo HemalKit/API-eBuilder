@@ -18,6 +18,7 @@ namespace API_eBuilder.Controllers
                 var emp = entities.employees.Where(e => e.email == login.email).FirstOrDefault();
                 if (emp != null)
                 {
+
                     if (string.Compare(Crypto.Hash(login.password), emp.password) == 0)
                     {
                         entities.Entry(emp).Collection("employees").Load();

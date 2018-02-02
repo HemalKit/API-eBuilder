@@ -23,7 +23,7 @@ namespace API_eBuilder.Controllers
                 var entity = entities.leavs.FirstOrDefault(l => l.LID == id);
                 if (entity != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { leaves = entity });
+                    return Request.CreateResponse(HttpStatusCode.OK, entity);
                 }
                 else
                 {
@@ -563,6 +563,9 @@ namespace API_eBuilder.Controllers
                     var entity = entities.leavs.FirstOrDefault(l => l.LID == id);
                     if (entity != null)
                     {
+                        var approvals = entities.approvals.Where(a => a.LID == id).ToList();
+                        approvals.ForEach(a => entities.approvals.Remove(a));
+
                         entities.leavs.Remove(entity);
                         entities.SaveChanges();
                         return Request.CreateResponse(HttpStatusCode.OK);
@@ -611,6 +614,33 @@ namespace API_eBuilder.Controllers
             catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        /// <summary>
+        /// Get all the leaves applied by an employee
+        /// </summary>
+        /// <param name="EID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Leaves/All")]
+        public HttpResponseMessage GetAll(string EID)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var entity = entities.leavs.Where(l => l.EID == EID).ToList();
+                    var allLeaveList = new List<leavWithStatusAndName>();
+
+                    entity.ForEach(e => allLeaveList.Add(new leavWithStatusAndName(e)));
+
+                    return Request.CreateResponse(HttpStatusCode.OK, allLeaveList);
+                }
+            }
+            catch (Exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error Occured");
             }
         }
     }
