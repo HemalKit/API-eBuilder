@@ -452,7 +452,7 @@ namespace API_eBuilder.Controllers
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No leaves available");
                     }
 
-
+                    //leave.leaveCategory = leave.leaveCategory.ToLower();
                     entities.leavs.Add(leave);                    
                     var man = entities.employees.FirstOrDefault(e => e.EID == leave.EID);
 
@@ -568,7 +568,7 @@ namespace API_eBuilder.Controllers
 
                         entities.leavs.Remove(entity);
                         entities.SaveChanges();
-                        return Request.CreateResponse(HttpStatusCode.OK);
+                        return Request.CreateResponse(HttpStatusCode.OK,new { Message = "Deleted" });
                     }
                     else
                     {

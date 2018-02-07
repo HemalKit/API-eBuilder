@@ -150,7 +150,7 @@ namespace API_eBuilder.Controllers
 
                     foreach(var emp in manager.employee1)
                     {
-                        var attList = entities.attendances.Where(a => a.EID == emp.EID && (DateTime.Compare(startDate, a.date) < 0 && DateTime.Compare(a.date, endDate) < 0)).ToList();
+                        var attList = entities.attendances.Where(a => a.EID == emp.EID && (DateTime.Compare(startDate, a.date) <= 0 && DateTime.Compare(a.date, endDate) <= 0)).ToList();
                         foreach( var a in attList)
                         {
                             var attWithWH = new attendanceWithWorkingHours(a);                            
@@ -165,11 +165,7 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
-
         
-
-
 
         /// <summary>
         /// Add an attendance to the database
@@ -182,6 +178,10 @@ namespace API_eBuilder.Controllers
             {
                 using (ebuilderEntities entities = new ebuilderEntities())
                 {
+                    if (DateTime.Compare(DateTime.Today, att.date.Date) < 0)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Attendance for future dates are not allowed");
+                    }
                     if (att.EID == null || att.checkIn == null || att.checkOut == null)
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Some fields are empty");
@@ -250,6 +250,21 @@ namespace API_eBuilder.Controllers
             catch(Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("api/Attendance/MinWorkingHours")]
+        public HttpResponseMessage MinWorkingHours()
+        {
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, attendanceWithWorkingHours.MinRequiredWH);
+            }
+            catch
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error Occured");
             }
         }
 
