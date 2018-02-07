@@ -304,6 +304,144 @@ namespace API_eBuilder.Controllers
             }
         }
 
+        /// <summary>
+        /// Get the duty leaves percentage by weekday
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/DutyLeaves/Weekly")]
+        public HttpResponseMessage GetWeekly()
+        {
+            try
+            {
+                using (ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var allDutyLeaves = entities.duty_leave.Where(l => l.date.Year == DateTime.Now.Year).ToList();
+                    var dutyLeavePercentageByWeeklyDay = new appliedLeavesPercentView();
+                    for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++)
+                    {
+                        switch (dayOfWeek)
+                        {
+                            case 1:
+                                int leaveCountMonday = allDutyLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Monday).ToList().Count;
+                                dutyLeavePercentageByWeeklyDay.Monday = Math.Round((((double)leaveCountMonday) / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 2:
+                                int leaveCountTuesday = allDutyLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Tuesday).ToList().Count;
+                                dutyLeavePercentageByWeeklyDay.Tuesday = Math.Round((((double)leaveCountTuesday) / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 3:
+                                int leaveCountWednesday = allDutyLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Wednesday).ToList().Count;
+                                dutyLeavePercentageByWeeklyDay.Wednesday = Math.Round((((double)leaveCountWednesday) / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 4:
+                                int leaveCountThursday = allDutyLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Thursday).ToList().Count;
+                                dutyLeavePercentageByWeeklyDay.Thursday = Math.Round((((double)leaveCountThursday) / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 5:
+                                int leaveCountFriday = allDutyLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Friday).ToList().Count;
+                                dutyLeavePercentageByWeeklyDay.Friday = Math.Round((((double)leaveCountFriday) / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 6:
+                                int leaveCountSaturday = allDutyLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Saturday).ToList().Count;
+                                dutyLeavePercentageByWeeklyDay.Saturday = Math.Round((((double)leaveCountSaturday) / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 7:
+                                int leaveCountSunday = allDutyLeaves.Where(l => l.date.DayOfWeek == DayOfWeek.Sunday).ToList().Count;
+                                dutyLeavePercentageByWeeklyDay.Sunday = Math.Round((((double)leaveCountSunday) / allDutyLeaves.Count * 100), 2);
+                                break;
+                        }
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, dutyLeavePercentageByWeeklyDay);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
+        /// <summary>
+        /// Get the duty keaves percentage by month
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/DutyLeaves/Monthly")]
+        public HttpResponseMessage GetMonthly()
+        {
+            try
+            {
+                using (ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var allDutyLeaves = entities.duty_leave.Where(l => l.date.Year == DateTime.Now.Year).ToList();
+                    var dutyLeavePercentageByMonth = new appliedLeavesPercentViewMonthly();
+
+                    for (int month = 1; month <= 12; month++)
+                    {
+                        switch (month)
+                        {
+                            case 1:
+                                int leaveCountJan = allDutyLeaves.Where(l => l.date.Month == 1).ToList().Count;
+                                dutyLeavePercentageByMonth.January = Math.Round(((double)leaveCountJan / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 2:
+                                int leaveCountFeb = allDutyLeaves.Where(l => l.date.Month == 2).ToList().Count;
+                                dutyLeavePercentageByMonth.February = Math.Round(((double)leaveCountFeb / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 3:
+                                int leaveCountMar = allDutyLeaves.Where(l => l.date.Month == 3).ToList().Count;
+                                dutyLeavePercentageByMonth.March = Math.Round(((double)leaveCountMar / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 4:
+                                int leaveCountApr = allDutyLeaves.Where(l => l.date.Month == 4).ToList().Count;
+                                dutyLeavePercentageByMonth.April = Math.Round(((double)leaveCountApr / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 5:
+                                int leaveCountMay = allDutyLeaves.Where(l => l.date.Month == 5).ToList().Count;
+                                dutyLeavePercentageByMonth.May = Math.Round(((double)leaveCountMay / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 6:
+                                int leaveCountJun = allDutyLeaves.Where(l => l.date.Month == 6).ToList().Count;
+                                dutyLeavePercentageByMonth.June = Math.Round(((double)leaveCountJun / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 7:
+                                int leaveCountJul = allDutyLeaves.Where(l => l.date.Month == 7).ToList().Count;
+                                dutyLeavePercentageByMonth.July = Math.Round(((double)leaveCountJul / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 8:
+                                int leaveCountAug = allDutyLeaves.Where(l => l.date.Month == 8).ToList().Count;
+                                dutyLeavePercentageByMonth.August = Math.Round(((double)leaveCountAug / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 9:
+                                int leaveCountSep = allDutyLeaves.Where(l => l.date.Month == 9).ToList().Count;
+                                dutyLeavePercentageByMonth.September = Math.Round(((double)leaveCountSep / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 10:
+                                int leaveCountOct = allDutyLeaves.Where(l => l.date.Month == 10).ToList().Count;
+                                dutyLeavePercentageByMonth.October = Math.Round(((double)leaveCountOct / allDutyLeaves.Count * 100), 2);
+                                break;
+                            case 11:
+                                int leaveCountNov = allDutyLeaves.Where(l => l.date.Month == 11).ToList().Count;
+                                dutyLeavePercentageByMonth.November = Math.Round(((double)leaveCountNov / allDutyLeaves.Count), 2);
+                                break;
+                            case 12:
+                                int leaveCountDec = allDutyLeaves.Where(l => l.date.Month == 12).ToList().Count;
+                                dutyLeavePercentageByMonth.December = Math.Round(((double)leaveCountDec / allDutyLeaves.Count * 100), 2);
+                                break;
+                        }
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, dutyLeavePercentageByMonth);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+
+
     }
 
 }

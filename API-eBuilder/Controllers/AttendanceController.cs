@@ -103,7 +103,7 @@ namespace API_eBuilder.Controllers
             {
                 using(ebuilderEntities entities = new ebuilderEntities())
                 {
-                    var entity = entities.attendances.Where(a => a.EID == EID && (DateTime.Compare(startDate, a.date) < 0 && DateTime.Compare(a.date, endDate) < 0)).ToList();
+                    var entity = entities.attendances.Where(a => a.EID == EID && (DateTime.Compare(startDate, a.date) <= 0 && DateTime.Compare(a.date, endDate) <= 0)).ToList();
 
                     List<attendanceWithWorkingHours> attList = new List<attendanceWithWorkingHours>();
 
@@ -150,7 +150,7 @@ namespace API_eBuilder.Controllers
 
                     foreach(var emp in manager.employee1)
                     {
-                        var attList = entities.attendances.Where(a => a.EID == emp.EID && (DateTime.Compare(startDate, a.date) <= 0 && DateTime.Compare(a.date, endDate) <= 0)).ToList();
+                        var attList = entities.attendances.Where(a => a.EID == emp.EID && (DateTime.Compare(startDate, a.date) < 0 && DateTime.Compare(a.date, endDate) <= 0)).ToList();
                         foreach( var a in attList)
                         {
                             var attWithWH = new attendanceWithWorkingHours(a);                            
