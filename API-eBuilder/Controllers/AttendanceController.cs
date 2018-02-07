@@ -268,5 +268,32 @@ namespace API_eBuilder.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("api/Attendance/WorkingHours")]
+        public HttpResponseMessage WorkingHours(string EID)
+        {
+            try
+            {
+                using(ebuilderEntities entities = new ebuilderEntities())
+                {
+                    var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).Date;
+                    var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                    var attList = entities.attendances.Where(a => a.EID == EID && DateTime.Compare(firstDayOfMonth, a.date) <= 0 && DateTime.Compare(a.date, lastDayOfMonth) <= 0).ToList();
+                    var attlistWH = new List<attendanceWithWorkingHours>();
+                    attList.ForEach(a => attlistWH.Add(new attendanceWithWorkingHours(a)));
+
+                    var totalWH = new TimeSpan(0, 0, 0, 0);
+                    attlistWH.ForEach(a => totalWH=totalWH.Add(a.workingHours));
+
+                    return Request.CreateResponse(HttpStatusCode.OK, Math.Round(totalWH.TotalHours,2));
+                }
+            }
+            catch (Exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error Occured");
+            }
+        }
     }
 }

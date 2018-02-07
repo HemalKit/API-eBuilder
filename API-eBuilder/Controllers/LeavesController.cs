@@ -33,76 +33,7 @@ namespace API_eBuilder.Controllers
             }
         }
 
-        /* public HttpResponseMessage Get(DateTime? date = null, string leaveCategory="all", string jobCategory ="all", string EID = "all")
-         {
-             try
-             {
-                 using (ebuilderEntities entities = new ebuilderEntities())
-                 {
-                     string parameters = "";
-                     parameters += date == null ? "0" : "1";
-                     parameters += leaveCategory == "all" ? "0" : "1";
-                     parameters += jobCategory == "all" ? "0" : "1";
-                     parameters += EID == "all" ? "0" : "1";
-
-                     var entity = new List<leav>() ;
-                     switch (parameters)
-                     {
-                         case "0000":                         
-                              entity = entities.leavs.ToList();
-                              break;                            
-                         case "0001":
-                             entity = entities.leavs.Where(l => l.EID == EID).ToList();
-                             break;
-                         case "0010":                       
-                             entity = entities.leavs.Where(l => l.jobCategory == jobCategory).ToList();
-                             break;
-                         case "0011":                       
-                             entity = entities.leavs.Where(l => l.jobCategory == jobCategory && l.EID == EID).ToList();
-                             break;
-                         case "0100":                                             
-                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory).ToList();
-                             break;
-                         case "0101":                                                
-                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.EID == EID).ToList();
-                             break;
-                         case "0110":
-                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.jobCategory == jobCategory).ToList();
-                             break;
-                         case "0111":
-                             entity = entities.leavs.Where(l => l.leaveCategory == leaveCategory && l.jobCategory == jobCategory && l.EID == EID).ToList();
-                             break;
-                         case "1000":
-                             entity = entities.leavs.Where(l => l.date == date).ToList();
-                             break;
-                         case "1001":
-                             entity = entities.leavs.Where(l => l.date == date && l.EID == EID).ToList();
-                             break;
-                         case "1010":
-                             entity = entities.leavs.Where(l =>  l.date == date && l.jobCategory == jobCategory).ToList();
-                             break;
-                         case "1011":
-                             entity = entities.leavs.Where(l => l.date == date && l.jobCategory == jobCategory && l.EID == EID).ToList();
-                             break;
-                         case "1100":
-                             entity = entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory).ToList();
-                             break;
-                         case "1101":
-                             entity = entities.leavs.Where(l => l.date == date && l.leaveCategory == leaveCategory && l.EID == EID).ToList();
-                             break;
-                         case "1111":
-                             entity = entities.leavs.Where(l =>l.date == date && l.leaveCategory == leaveCategory && l.jobCategory == jobCategory && l.EID == EID).ToList();
-                             break;
-                     }
-                     return Request.CreateResponse(HttpStatusCode.OK, entity);
-                 }
-             }
-             catch(Exception ex)
-             {
-                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-             }
-         }  */
-
+        
         /// <summary>
         /// Get list of accepted leaves for a given EID within a given range
         /// </summary>
