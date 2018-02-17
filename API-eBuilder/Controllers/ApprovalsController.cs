@@ -180,7 +180,7 @@ namespace API_eBuilder.Controllers
                     }
                     else
                     {
-                        entity.status = appr.status;
+                        entity.status = appr.status.ToLower();
                         entities.SaveChanges();
                         return Request.CreateResponse(HttpStatusCode.OK, entity);
                     }

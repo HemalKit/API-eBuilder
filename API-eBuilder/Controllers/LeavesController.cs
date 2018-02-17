@@ -86,13 +86,41 @@ namespace API_eBuilder.Controllers
                 {
                     var jCategory = entities.employees.FirstOrDefault(e => e.EID == EID).jobCategory;
                     var allLeavesTypes = entities.leave_type.Where(lt => lt.jobCategory == jCategory).ToList();
+                    List<leav> leavesApplied;
+                    int leaveTakenCount = 0;
 
-                    foreach(var lt in allLeavesTypes)
+                    foreach (var lt in allLeavesTypes)
                     {
-                        var leavesTakenCount = entities.leavs.Where(l => l.EID == EID && l.leaveCategory == lt.leaveCategory && l.date.Year == DateTime.Now.Year).Count();
-                        lt.maxAllowed = lt.maxAllowed - leavesTakenCount;
+                        switch (lt.leaveCategory)
+                        {
+                            case "casual":
+                            case "medical":
+                                leavesApplied = entities.leavs.Where(l => l.EID == EID && l.leaveCategory == lt.leaveCategory && l.date.Year == DateTime.Now.Year).ToList();
+                                foreach(var l in leavesApplied)
+                                {
+                                    if (entities.approvals.Where(a => a.LID == l.LID).All(a => a.status == "accepted"))
+                                    {
+                                        leaveTakenCount++;
+                                    }
+                                }
+                                lt.maxAllowed = lt.maxAllowed - leaveTakenCount;
+                                leaveTakenCount = 0;
+                                break;
+                            case "short leave":
+                            case "half day":
+                                leavesApplied = entities.leavs.Where(l => l.EID == EID && l.leaveCategory == lt.leaveCategory && l.date.Month == DateTime.Now.Month).ToList();
+                                foreach (var l in leavesApplied)
+                                {
+                                    if (entities.approvals.Where(a => a.LID == l.LID).All(a => a.status == "accepted"))
+                                    {
+                                        leaveTakenCount++;
+                                    }
+                                }
+                                lt.maxAllowed = lt.maxAllowed - leaveTakenCount;
+                                leaveTakenCount = 0;
+                                break;
+                        }                        
                     }
-
                     return Request.CreateResponse(HttpStatusCode.OK, allLeavesTypes);
                 }
             }
@@ -383,7 +411,7 @@ namespace API_eBuilder.Controllers
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No leaves available");
                     }
 
-                    //leave.leaveCategory = leave.leaveCategory.ToLower();
+                    leave.leaveCategory = leave.leaveCategory.ToLower();
                     entities.leavs.Add(leave);                    
                     var man = entities.employees.FirstOrDefault(e => e.EID == leave.EID);
 
