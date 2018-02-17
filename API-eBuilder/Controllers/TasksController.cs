@@ -56,7 +56,6 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
         /// <summary>
         /// Delete a task
         /// </summary>
@@ -88,7 +87,6 @@ namespace API_eBuilder.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
-
         /// <summary>
         /// Update time, date, activity or status of an existing task
         /// </summary>
