@@ -170,7 +170,6 @@ namespace API_eBuilder.Controllers
                         entity.homeNo = emp.homeNo;
                         entity.city = emp.city;
                         entity.gender = emp.gender;
-                        entity.dob = emp.dob;
                         entity.jobCategory = emp.jobCategory;
 
                         entities.SaveChanges();
