@@ -244,7 +244,7 @@ namespace API_eBuilder.Controllers
             }
             var fromEmail = new MailAddress("technocoders.ebuilder@gmail.com");
             var toEmail = new MailAddress(email);
-            var fromEmailPassword = "154008k@uom.lk";
+            var a = "";
             string subject = "Forgot Password";
 
             string body = "The verification code to get access again is <br/><h2>" + verificationCode + "</h2>";
@@ -256,7 +256,7 @@ namespace API_eBuilder.Controllers
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+                Credentials = new NetworkCredential(fromEmail.Address, a)
             };
 
             using (var message = new MailMessage(fromEmail, toEmail)
